@@ -1,67 +1,117 @@
-[![](https://img.shields.io/github/v/release/byeolang/byeol.svg?include_prereleases&label=latest%20release&style=flat-square)](https://github.com/byeolang/byeol/releases)
-[![](https://img.shields.io/github/release-date-pre/byeolang/byeol.svg?label=on&style=flat-square)](https://github.com/byeolang/byeol/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/byeolang/byeol/ci-main.yml?style=flat-square)](https://github.com/byeolang/byeol/actions)
-[![codecov](https://codecov.io/gh/byeolang/byeol/branch/main/graph/badge.svg?token=C7fR6WGbJZ)](https://codecov.io/gh/byeolang/byeol)
-![](https://img.shields.io/github/languages/code-size/byeolang/byeol.svg?style=flat-square)
-[![line of codes](https://img.shields.io/endpoint?url=https%3A%2F%2Fghloc.vercel.app%2Fapi%2Fbyeolang%2Fbyeol%2Fbadge&style=flat-square)](https://ghloc.vercel.app/byeolang/byeol?branch=main)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/byeolang/byeol/total?style=flat-square)
-[![Discord](https://img.shields.io/discord/1080131343012339712?style=flat-square)](https://discord.com/channels/1080131343012339712/)
+# stela
+`stela` is a separate repository for the configuration / manifest layer used by the byeol project.
 
-Byeol, <br/>The new programming language.
-=======================================
+Although this repository is managed independently, its design, goals, and long-term direction are still closely tied to the overall byeol ecosystem.
 
-    ! Please be advised that 'byeol' can't support below features now. we're working in progress.
+---
 
-### What's this?
-byeol is a interpreter and visual IDE for new programming language, byeol language.
-it has following main features.
+## Overview
 
-> * anchor-way development: You can get "so immediately" feedbacks whenever you codes.
-        there is no any a "compile" thing. if you're writing down your codes, means that
-        you're in debugging at the same time.
->
->
-> * Touch the instances: Basically, in order to make your function or class with 'byeol',
-        you should write somethings as a text. like other launguages.
-        But, because of lack of compling, you always are in a middle of runtime envrionment
-        whenever you codes your software. You can see which interactions are made of between
-        classes and functions in visualized 3d graphics.
-        Visualization can get strong points that make you focus the whole picture of your
-        software.
->
-> * ModuleStore: Module is simply plug-in. mostly based on c++. you download pods
-        which you want anytime.
->
-> * Easy to use: we hope who aren't a programmer could join us to make a program with
-        byeol. its IDE will be served as a classic GAME.
-        pixel art, particle effects, retro sound fx, RPGistic UI, Worldmap, quest and archivement.
+stela exists to separate and organize the parts of the byeol ecosystem that deal with:
 
+- configuration and manifest representation
+- pack / toolchain / FFI-related metadata
+- parser / loader infrastructure for structured project metadata
+- independent maintenance of the configuration layer
 
-### Dev. Environment
-> * build: cmake&make, clang, python(for some scripts) + bison
-> * issue-tracker: github project
-> * unit-test: gtest
-> * road-map: refer http://free-timeline.com/?shared=10593
-> * os: linux, macos, windows + WSL(ubuntu)
+In other words, stela is not just a helper file format.  
+It is intended to be the structured configuration and manifest layer of the wider byeol ecosystem.
 
+---
 
-### How to Start
-#### Let's Build
+## Current Status
 
-Preparing: to build 'byeol', following softwares will be needed.
+This repository is still in an early stage of separation.
 
-    python 3.+, cmake, make, and clang
+That means the following may continue to evolve:
 
-if you're trying on windows, then it's recommended to use WSL and above softwares.
+- syntax details
+- internal directory layout
+- build structure
+- public API and usage patterns
+- manifest and FFI-related specifications
 
-Then, just enter:
+At this stage, it should be understood less as a fully standalone product and more as a repository extracted from the broader byeol project for better separation of concerns.
 
-    python ./build/builder.py dbg
+---
 
-All script you need for doing something on 'byeol' is just at builder.py.
+## Important
 
-For more information, try "builder.py help"
+This repository does **not** currently contain the full background needed to understand every design decision in isolation.
 
-#### Let's make something with byeol!
+For the broader context, you should refer to the main **byeol** repository, especially for:
 
-    Oh,... Ummmm. Not yet.
+- project philosophy
+- overall architecture
+- pack / manifest model
+- FFI direction
+- contribution workflow
+- shared build conventions
+- terminology and design rationale
+
+So while `stela` is now a separate repository, **the main conceptual and architectural context still lives in byeol**.
+
+---
+
+## Recommended Reading Order
+
+If you are new to this repository, it is recommended that you read materials in roughly this order:
+
+1. High-level documentation in the main `byeol` repository
+2. `byeol` onboarding / architecture / contribution documents
+3. Then the code and documents in this repository
+
+Starting from `stela` alone may make some of the design choices look arbitrary, when they are actually derived from the larger byeol direction.
+
+---
+
+## Build / Integration
+
+This repository is expected to follow the shared build conventions used across byeol-related projects.
+
+Depending on the stage of development, it may be used in one or more of the following ways:
+
+- built independently
+- included by a parent project through `FetchContent` or `add_subdirectory`
+- consumed indirectly through a larger toolchain or packaging flow
+
+More detailed build instructions may be added as the repository structure stabilizes.
+
+---
+
+## Contributing
+
+Contributions are welcome, but large changes should be made with awareness of the wider byeol project direction.
+
+In particular, the following kinds of changes should be considered in the context of the main byeol repository as well:
+
+- syntax additions or changes
+- manifest schema changes
+- FFI-related representation changes
+- public interface changes
+- build or packaging policy changes
+
+In short: changes here may have implications outside this repository.
+
+---
+
+## Why This Repository Exists
+
+This repository was split out in order to improve:
+
+- separation of responsibilities
+- clarity of project structure
+- potential for independent versioning
+- reuse across related repositories
+- maintainability over time
+
+That said, separation does not imply complete independence.  
+For now, the most accurate way to understand `stela` is as a focused repository within the larger byeol ecosystem.
+
+---
+
+## Summary
+
+- `stela` is the configuration / manifest layer repository for the byeol ecosystem.
+- It is still in an early stage and parts of its structure and specification may change.
+- For the full design rationale and project context, you should also read the main **byeol** repository.
