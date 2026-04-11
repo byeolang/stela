@@ -1,0 +1,103 @@
+div#projectname p {
+    font-size: 10px;
+    display: inline;
+}
+
+@media screen and (min-width: 900px) {
+    #doc-content {
+        height: calc(100dvh) !important;
+        width: calc(100dvw - 340px) !important;
+        padding-right: 10px;
+        float: right;
+    }
+}
+
+div.contents, div.header .title {
+    margin: 0 !important;
+}
+
+div.contents li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+div#nav-tree-contents > ul > li > div:first-child {
+    display: none;
+}
+
+div#nav-sync {
+    display: none;
+}
+
+div.doxygen-awesome-fragment-wrapper {
+    margin-bottom: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.doxsection {
+    margin-top: 90px;
+}
+
+:root {
+    --byeol-white: #FFFFFF;
+    --byeol-white2: #E9EBF2;
+    --byeol-night: #0B1C26;
+    --byeol-night2: #112A40;
+    --byeol-night3: #2E4559;
+    --byeol-grass: #6AB04B;
+    --byeol-point: #4189A6;
+    --byeol-moon: #E0B88D;
+    --byeol-nebular: #ca5fa4;
+    --byeol-nebular-light: #F2B6D7;
+}
+
+div.fragment pre {
+    position: relative;
+}
+
+#nav-tree, div.fragment, pre.fragment, div.memproto, .contents center, .contents .center, .contents table:not(.memberdecls):not(.mlabels):not(.fieldtable):not(.memname) tbody, div.contents .toc, .contents .dotgraph, .contents .tabs-overview-container {
+    scrollbar-width: auto !important;
+}
+
+::-webkit-scrollbar {
+    width: 16px !important;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 8px !important;
+    background-color: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px !important;
+    border: 3px solid transparent !important;
+    background-clip: content-box !important;
+    background-color: var(--byeol-point) !important;
+}
+
+html {
+    --page-background-color: var(--byeol-white) !important;
+    --side-nav-background: var(--byeol-white2) !important;
+    --fragment-background: var(--byeol-white2) !important;
+}
+
+svg {
+    fill: var(--byeol-moon) !important;
+}
+
+html.dark-mode {
+    --page-background-color: var(--byeol-night) !important;
+    --side-nav-background: var(--byeol-night2) !important;
+    --fragment-background: var(--byeol-night2) !important;
+    --primary-color: var(--byeol-point) !important;
+}
+
+a:link, a:visited, a:focus, a:active {
+    color: var(--byeol-nebular) !important;
+}
+
+a:hover {
+    color: var(--byeol-nebular-light) !important;
+    text-decoration: none !important;
+}

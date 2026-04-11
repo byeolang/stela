@@ -71,6 +71,7 @@ docs/html/
 docs/xml/
 .DS_Store
 bin/
+lib/
 **/worker/bison/lowscanner.cpp
 **/worker/bison/lowscanner.hpp
 **/worker/bison/lowparser.cpp
