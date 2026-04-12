@@ -24,8 +24,6 @@ Binaries/
 *.log
 logs
 *.exe
-!AfterBuild.exe
-!Applications/SDKBuilder/sdkbuilder.bat
 *.ini
 SDK/
 *.rsp
@@ -72,10 +70,6 @@ docs/xml/
 .DS_Store
 bin/
 lib/
-**/worker/bison/lowscanner.cpp
-**/worker/bison/lowscanner.hpp
-**/worker/bison/lowparser.cpp
-**/worker/bison/lowparser.hpp
 **/worker/bison/*.output
 **/worker/bison/*.gv
 **/worker/bison/*.jpg
@@ -98,5 +92,5 @@ code_coverage.info
 *.ninja
 .aider*
 .claude/
-byeol-pack-codebase-by-repomix.md
+stela-codebase-by-repomix.md
 .codex
