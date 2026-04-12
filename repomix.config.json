@@ -1,6 +1,6 @@
 {
   "output": {
-    "file_path": "byeol-codebase-by-repomix.md",
+    "file_path": "stela-codebase-by-repomix.md",
     "style": "markdown",
     "remove_comments": false,
     "remove_empty_lines": false,
@@ -27,12 +27,6 @@
     "keep_interfaces": true
   },
   "ignore": {
-    "custom_patterns": [
-        "doc/idea/*",
-        "doc/note/*",
-        "doc/guide/en/*",
-        "doc/ref/en/*"
-    ],
     "use_gitignore": true,
     "use_default_ignore": true
   }
