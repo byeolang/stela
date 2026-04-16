@@ -22,7 +22,7 @@
 #define BY_BUILD_VER_VALUE         BY_STR(BY_BUILD_VER_MAJOR) "." BY_STR(BY_BUILD_VER_MINOR) "." BY_BUILD_VER_PATCH
 #define BY_BUILD_COUNT             @BUILD_COUNT@
 #define BY_BUILD_GIT_COMMIT_HASH   "@GIT_COMMIT_HASH@"
-#define BY_BUILD_VERSION           "@VERSION@"
+#define BY_BUILD_VER               "@VER_NAME@ Update" BY_BUILD_VER_VALUE
 #define BY_BUILD_TYPENAME          "@CMAKE_BUILD_TYPE@"
 #define BY_IS_DBG                  @CMAKE_IS_DBG@
 #define BY_BUILD_PLATFORM_NAME     "@CMAKE_SYSTEM_NAME@"

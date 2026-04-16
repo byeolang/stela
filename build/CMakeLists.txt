@@ -15,23 +15,20 @@ ELSE()
 ENDIF(EMSCRIPTEN)
 
 cmake_minimum_required (VERSION 3.14)
-project(byeol C CXX)
+project(stela C CXX)
 
-#defines:
-execute_process(
-    COMMAND git rev-parse --short HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_COMMIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-set(SHOW_CMAKE_VARIABLES 1)
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 2)
-set(VERSION_FIX 12)
-set(BUILD_COUNT 1543)
-set(VERSION_NAME "Mana")
-set(VERSION_VALUE "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_FIX}")
-set(VERSION "${VERSION_NAME} Update ${VERSION_VALUE}")
+# include build-common if this is host project.
+get_property(build_common_included GLOBAL PROPERTY BUILD_COMMON_INCLUDED)
+if(NOT build_common_included)
+    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../external/build-common)
+    include(buildCommon)
+
+    # parse version
+    by_parse_ver("${CMAKE_CURRENT_SOURCE_DIR}/../CHANGELOGS.md")
+    set(VERSION_NAME "") # don't use version name in default.
+endif()
+
+
 #   build-date:
 string(TIMESTAMP BUILD_DATE_YEAR "%Y")
 string(TIMESTAMP BUILD_DATE_MONTH "%m")
@@ -44,11 +41,6 @@ string(TIMESTAMP BUILD_TIME_SECOND "%S")
 string(TIMESTAMP BUILD_TIME "${BUILD_TIME_HOUR}:${BUILD_TIME_MINUTE}:${BUILD_TIME_SECOND}")
 set(BUILD_DATE_AND_TIME "${BUILD_DATE} ${BUILD_TIME}")
 
-message("")
-message("${VERSION}")
-message(" on ${BUILD_DATE_AND_TIME}")
-message("----------------------------------------")
-message("")
 
 message("\ninitialize CMake variables...")
 

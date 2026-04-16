@@ -83,15 +83,12 @@ namespace by {
         public:
             static const std::string& get();
             static const std::string& getValue();
-            static const std::string& getName();
 
             static constexpr nint getMajor() { return BY_BUILD_VERSION_MAJOR; }
 
             static constexpr nint getMinor() { return BY_BUILD_VERSION_MINOR; }
 
-            static constexpr nint getFix() { return BY_BUILD_VERSION_FIX; }
-
-            static constexpr nint getBuildCount() { return BY_BUILD_COUNT; }
+            static constexpr nint getPatch() { return BY_BUILD_VERSION_FIX; }
 
             static constexpr const nchar* getCommitHash() { return BY_BUILD_GIT_COMMIT_HASH; }
         };

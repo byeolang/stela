@@ -14,17 +14,12 @@ namespace by {
     }
 
     const std::string& me::version::get() {
-        static std::string inner(BY_BUILD_VERSION);
+        static std::string inner(BY_BUILD_VER);
         return inner;
     }
 
     const std::string& me::version::getValue() {
-        static std::string inner(BY_BUILD_VERSION_VALUE);
-        return inner;
-    }
-
-    const std::string& me::version::getName() {
-        static std::string inner(BY_BUILD_VERSION_NAME);
+        static std::string inner(BY_BUILD_VER_VALUE);
         return inner;
     }
 
