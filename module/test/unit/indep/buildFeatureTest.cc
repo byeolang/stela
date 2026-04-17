@@ -20,10 +20,9 @@ TEST(buildFeatureTest, timeGetter) {
 TEST(buildFeatureTest, versionGetter) {
     ASSERT_GE(buildFeature::version::getMajor(), 0);
     ASSERT_GE(buildFeature::version::getMinor(), 0);
-    ASSERT_GE(buildFeature::version::getFix(), 0);
+    ASSERT_GE(buildFeature::version::getPatch(), 0);
     ASSERT_STRNE(buildFeature::version::get().c_str(), "");
     ASSERT_STRNE(buildFeature::version::getValue().c_str(), "");
-    ASSERT_STRNE(buildFeature::version::getName().c_str(), "");
 }
 
 TEST(buildFeatureTest, platformGetter) {
