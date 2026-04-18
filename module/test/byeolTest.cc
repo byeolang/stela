@@ -2,13 +2,9 @@
 
 typedef byeolTest me;
 
-void me::SetUp() {
-    _assertVault();
-}
+void me::SetUp() { _assertVault(); }
 
-void me::TearDown() {
-    _assertVault();
-}
+void me::TearDown() { _assertVault(); }
 
 by::instance::vault& me::_getVault() { return by::instance::getVault(); }
 
