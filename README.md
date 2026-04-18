@@ -10,7 +10,7 @@ Although this repository is managed independently, its design, goals, and long-t
 stela exists to separate and organize the parts of the byeol ecosystem that deal with:
 
 - configuration and manifest representation
-- pack / toolchain / FFI-related metadata
+ pack / toolchain / FFI-related metadata
 - parser / loader infrastructure for structured project metadata
 - independent maintenance of the configuration layer
 
