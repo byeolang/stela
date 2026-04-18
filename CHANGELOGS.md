@@ -2,6 +2,9 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.1
+- fully working `stela` repository, with all features and functionality from the pre-split history.
+
 ## Pre-split history
 
 Before this repository was created, stela-related development happened inside the main `byeol` repository.
