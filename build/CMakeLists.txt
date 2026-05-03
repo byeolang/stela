@@ -29,6 +29,16 @@ if(NOT build_common_included)
 endif()
 
 
+# dependencies check:
+by_check_dependency(
+  NAMES bison
+  MIN_VERSION 3.8.0
+)
+by_check_dependency(
+  NAMES flex
+  MIN_VERSION 2.6.0
+)
+
 #   build-date:
 string(TIMESTAMP BUILD_DATE_YEAR "%Y")
 string(TIMESTAMP BUILD_DATE_MONTH "%m")
