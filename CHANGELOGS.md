@@ -2,6 +2,9 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.2
+- dependency checking has been added by using build-common cmake function.
+
 ## v0.1.1
 - fully working `stela` repository, with all features and functionality from the pre-split history.
 
