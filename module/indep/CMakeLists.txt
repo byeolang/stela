@@ -54,3 +54,11 @@ target_link_libraries(${moduleName} ${dependencies})
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
     target_compile_options(${moduleName} PUBLIC "/Zc:preprocessor")
 endif()
+
+# expose module/ as the public include root.
+# this is propagated via indep -> stela -> byeol.
+target_include_directories(${moduleName}
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
