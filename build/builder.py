@@ -88,9 +88,6 @@ def branch(command):
         return clean()
     elif command == "format":
         return formatCodesWithDocker(True)
-    elif command == "test":
-        arg1 = " ".join(sys.argv[2:])
-        return test(arg1)
 
     printErr(command + " is unknown command.")
     return -1
@@ -381,7 +378,6 @@ def help():
     print("\t * clean         clear all cache files of cmake outputs.")
     print("\t * format        apply our code convention rules to current repository. it'll be done by clang-format docker")
     print("\t                 image. and as you may know, that could lead you to download a pretty much big image file.")
-    print("\t * test          run ./bin/test after the project is already built.")
 
 def clean():
     printInfo("Clearing next following files...")
@@ -396,29 +392,6 @@ def clean():
     else:
         system("rm -rf " + cwd + "/html")
     printOk("was removed successfully.")
-
-def test(arg):
-    print("")
-    printInfoEnd("let's initiate unit tests...")
-    global binDir
-
-    originDir = os.getcwd()
-    os.chdir(binDir)
-
-    if isWindow():
-        cmd = ".\\test verbose " + arg
-    else:
-        cmd = "./test verbose " + arg
-
-    res = system(cmd.strip())
-    if res != 0:
-        printErr("test was failed!")
-        os.chdir(originDir)
-        return -1
-
-    printOk("all TCs have been passed!")
-    os.chdir(originDir)
-    return 0
 
 def _clean(directory):
     for path, dirs, files in os.walk(directory):
