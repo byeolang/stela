@@ -88,6 +88,8 @@ def branch(command):
         return clean()
     elif command == "format":
         return formatCodesWithDocker(True)
+    elif command == "doc":
+        return doc()
 
     printErr(command + " is unknown command.")
     return -1
@@ -352,6 +354,24 @@ class dependency:
         if self.isActivated():
             printOkEnd(self.binary)
 
+class GitDependency(dependency):
+    def getNames(self):
+        return ["git"]
+
+class DoxygenDependency(dependency):
+    def getNames(self):
+        return ["doxygen"]
+
+    def getExpectVer(self):
+        return ver(1, 10, 0, False)
+
+class JREDependency(dependency):
+    def getNames(self):
+        return ["java"]
+
+    def getExpectVer(self):
+        return ver(1, 8, 0, False)
+
 class DockerDependency(dependency):
     def getNames(self):
         return ["docker"]
@@ -375,9 +395,10 @@ def help():
     print("")
     print("command list:")
     print("\t * help")
-    print("\t * clean         clear all cache files of cmake outputs.")
-    print("\t * format        apply our code convention rules to current repository. it'll be done by clang-format docker")
-    print("\t                 image. and as you may know, that could lead you to download a pretty much big image file.")
+    print("\t * clean  clear all cache files of cmake outputs.")
+    print("\t * format apply our code convention rules to current repository. it'll be done by clang-format docker")
+    print("\t          image. and as you may know, that could lead you to download a pretty much big image file.")
+    print("\t * doc    generate documents only.")
 
 def clean():
     printInfo("Clearing next following files...")
@@ -415,6 +436,59 @@ def _cleanDir(dir):
     if os.path.isdir(dir) == False: return
     rmtree(dir)
 
+def docDoxygen(doxygen):
+    global cwd, python3
+
+    def runCommand(cmd):
+        res = system(cmd)
+        if res != 0:
+            printErr("fail to run doxygen.")
+            _cleanIntermediates()
+        return res
+
+    # build doxygen:
+    printInfoEnd("generating english docs using reference using doxygen...")
+    res = runCommand(f"{doxygen.binary} {cwd}{slash()}DoxyReference")
+    if res != 0: return res
+    printOk("done")
+
+def cleanGhPages(git):
+    global cwd, python3
+
+    def runCommand(cmd):
+        res = system(cmd)
+        if res != 0:
+            printErr("fail to clone gh-pages repo.")
+            _cleanIntermediates()
+        return res
+
+    # clean before fetch repo:
+    _cleanIntermediates()
+
+    pathHtml = f"{cwd}{slash()}html"
+    if isWindow():
+        system(f"del /s /f /q {pathHtml}")
+    else:
+        system(f"rm -rf {pathHtml}")
+
+    # standby gh-pages repo:
+    printInfoEnd("cloning gh-pages branch...")
+    res = runCommand(f"{git.binary} clone --depth 5 https://github.com/byeolang/website --single-branch {pathHtml}")
+    if res != 0: return res
+    printOk("done.")
+    return 0
+
+def doc():
+    doxygen = DoxygenDependency()
+    git = GitDependency()
+    jre = JREDependency()
+    if checkDependencies([doxygen, git, jre]):
+        return -1
+
+    if cleanGhPages(git) != 0:
+        return -1
+    docDoxygen(doxygen)
+    return 0
 
 def _where(name):
     cmd = ""
