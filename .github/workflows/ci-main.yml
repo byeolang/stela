@@ -264,3 +264,55 @@ jobs:
         $env:PATH = "$env:PATH;${{github.workspace}}\flex_bison"
         cmake -S ${{github.workspace}}\build -B ${{github.workspace}}\out\build -G "Visual Studio 17 2022" -A x64
         cmake --build ${{github.workspace}}\out\build --config Release --parallel
+
+  publish-doc:
+    needs: [checking-code-format, build-on-linux, build-on-macos, build-on-windows]
+    name: publish doc
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: checkout repository codes
+        uses: actions/checkout@v4
+
+      - name: cache Doxygen
+        uses: actions/cache@v4
+        id: doxygen-cache
+        with:
+          path: |
+            /usr/local/bin/doxygen
+            /usr/local/share/man/man1/doxygen.1
+          key: ${{ runner.os }}-doxygen-1.10.0
+
+      - name: cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-jinja2-pygments
+
+      - name: install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install -y graphviz python3 python3-pip wget cmake flex bison default-jre
+
+      - name: install doxygen 1.10.0 from source
+        if: steps.doxygen-cache.outputs.cache-hit != 'true'
+        run: |
+          wget https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.src.tar.gz
+          tar -xzf doxygen-1.10.0.src.tar.gz
+          cd doxygen-1.10.0
+          cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+          sudo make -j$(nproc) install
+
+      - name: verify doxygen
+        run: doxygen --version
+
+      - name: install python dependencies
+        run: sudo python3 -m pip install --upgrade jinja2 Pygments
+
+      - name: commit docs if it's different to previous commit
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          export PYTHON=$(which python3)
+          sudo $PYTHON ${{github.workspace}}/build/builder.py doc
+          sudo -E $PYTHON ${{github.workspace}}/build/builder.py pubdoc

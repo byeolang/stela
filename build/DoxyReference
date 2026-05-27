@@ -814,13 +814,10 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = doxygen \
-                         ../doc/ref/en \
                          ../module/clog \
                          ../module/indep \
-                         ../module/core \
                          ../module/memlite \
                          ../module/meta \
-                         ../module/frontend \
                          ../module/stela
 
 # This tag can be used to specify the character encoding of the source files
@@ -983,7 +980,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = ../doc/ref/en/MAINPAGE.md
+USE_MDFILE_AS_MAINPAGE = ../README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
