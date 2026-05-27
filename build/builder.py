@@ -90,6 +90,8 @@ def branch(command):
         return formatCodesWithDocker(True)
     elif command == "doc":
         return doc()
+    elif command == "pubdoc":
+        return _publishDoc()
 
     printErr(command + " is unknown command.")
     return -1
@@ -488,6 +490,38 @@ def doc():
     if cleanGhPages(git) != 0:
         return -1
     docDoxygen(doxygen)
+    return 0
+
+def _publishDoc():
+    git = GitDependency()
+    if checkDependencies([git]):
+        return -1
+
+    # pushing on gh-pages:
+    origin = cmdstr(f"{git.binary} rev-parse --verify HEAD")
+    print("origin=" + str(origin))
+    os.chdir(cwd + "/html")
+    system(f"{git.binary} add .")
+    system(f"{git.binary} config user.name \"autodocbot\"") # put on local config.
+    system(f"{git.binary} config user.email \"kniz@byeol.io\"")
+    res = system(f"{git.binary} commit -m \"The our poor little Autobot \\(❍ᴥ❍ʋ)/ generated docs for " + origin + ", clitter-clatter.\"")
+    if res != 0:
+        printErr("fail to commit on gh-pages.")
+        printInfo("but it seems that nothing changed.")
+        _cleanIntermediates()
+        return 0
+
+    token = os.environ.get("GH_TOKEN")
+    if token:
+        res = system(f"{git.binary} push https://x-access-token:{token}@github.com/byeolang/website.git main")
+        if res != 0:
+            printErr("WARNING: Push failed (likely conflict). Continuing as success.")
+
+    else:
+        printErr("WARNING: couldn't get token.")
+
+    os.chdir(cwd)
+    _cleanIntermediates()
     return 0
 
 def _where(name):
