@@ -78,6 +78,12 @@ jobs:
         cmake --build ${{github.workspace}}/out/build --parallel
         $PYTHON ${{github.workspace}}/build/builder.py test
 
+    - name: upload library files
+      uses: actions/upload-artifact@v4
+      with:
+        name: stela-linux-x64
+        path: ${{github.workspace}}/bin/*.so
+
   build-on-macos:
     name: build on macos
     runs-on: macos-15
@@ -150,6 +156,12 @@ jobs:
         cmake --build ${{github.workspace}}/out/build --parallel
         $PYTHON ${{github.workspace}}/build/builder.py test
 
+    - name: upload library files
+      uses: actions/upload-artifact@v4
+      with:
+        name: stela-macos-arm64
+        path: ${{github.workspace}}/bin/*.dylib
+
   build-on-windows:
     name: build on windows
     runs-on: windows-latest
@@ -202,6 +214,12 @@ jobs:
         $env:PATH = "$env:PATH;${{github.workspace}}\flex_bison"
         cmake -S ${{github.workspace}}\build -B ${{github.workspace}}\out\build -G "Visual Studio 17 2022" -A x64
         cmake --build ${{github.workspace}}\out\build --config Release --parallel
+
+    - name: upload library files
+      uses: actions/upload-artifact@v4
+      with:
+        name: stela-win-x64
+        path: ${{github.workspace}}\bin\*.dll
 
   publish-doc:
     needs: [build-on-linux, build-on-macos, build-on-windows]
