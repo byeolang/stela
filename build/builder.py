@@ -86,6 +86,9 @@ def branch(command):
         return help()
     elif command == "clean":
         return clean()
+    elif command == "test":
+        arg1 = "" if len(sys.argv) < 3 else sys.argv[2]
+        return test(arg1)
     elif command == "format":
         return formatCodesWithDocker(True)
     elif command == "doc":
@@ -437,6 +440,32 @@ def _clean(directory):
 def _cleanDir(dir):
     if os.path.isdir(dir) == False: return
     rmtree(dir)
+
+# arg is "" for dbg or "silent" for rel
+def test(arg):
+    print("")
+    printInfoEnd("let's initiate unit tests...")
+    global cwd, binDir
+
+    originDir = os.getcwd()
+    os.chdir(binDir)
+    failedCnt = 0
+    ret = 0
+    if isWindow():
+        res = system(".\\test verbose " + arg)
+    else:
+        res = system("./test verbose " + arg)
+    if res != 0:
+        printErr("test was failed!")
+        ret = -1
+        failedCnt += 1
+
+    if failedCnt > 0:
+        printErr("total " + str(failedCnt) + " TC files has reported that failed.")
+    else:
+        printOk("all TCs have been passed!")
+    os.chdir(originDir)
+    return ret
 
 def docDoxygen(doxygen):
     global cwd, python3
