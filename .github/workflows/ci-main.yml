@@ -219,7 +219,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: stela-win-x64
-        path: ${{github.workspace}}\bin\*.dll
+        path: ${{github.workspace}}\bin\Release\*.dll
 
   publish-doc:
     needs: [build-on-linux, build-on-macos, build-on-windows]
