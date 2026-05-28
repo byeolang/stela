@@ -94,3 +94,4 @@ code_coverage.info
 .claude/
 stela-codebase-by-repomix.md
 .codex
+.codex-repro/
