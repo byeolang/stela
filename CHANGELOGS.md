@@ -2,6 +2,10 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.4
+- fixed build error on Windows with the latest MSVC toolchain.
+- `builder.py` now supports `doc` and `pubdoc` commands for generating and publishing documentation.
+
 ## v0.1.3
 - build error occurs when stela is called to FetchContent by host project
 - host project can't call FetchContent to this because header files of stela aren't exposed to the public.
