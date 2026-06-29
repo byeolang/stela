@@ -1,3 +1,7 @@
+message("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
+message("┃ 🌏 preparing build common ┃")
+message("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛") 
+
 # include guard:
 get_property(build_common_included GLOBAL PROPERTY BUILD_COMMON_INCLUDED)
 if(build_common_included)
