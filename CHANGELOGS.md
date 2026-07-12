@@ -2,6 +2,9 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.5
++ update latest patch for build-common (windows build compatibility)
+
 ## v0.1.4
 - fixed build error on Windows with the latest MSVC toolchain.
 - `builder.py` now supports `doc` and `pubdoc` commands for generating and publishing documentation.
