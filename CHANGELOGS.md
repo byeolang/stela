@@ -2,6 +2,9 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.6
+* migrates `indep` project to seperate one to reuse other projects
+
 ## v0.1.5
 + update latest patch for build-common (windows build compatibility)
 
