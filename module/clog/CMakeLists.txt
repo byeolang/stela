@@ -1,5 +1,17 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
 
+include(FetchContent)
+
+# fetching indep:
+#   FetchContext could overwrites parent context(e.g. cmake variables),
+#   so I have to declare mine first.
+FetchContent_Declare(
+    indep_dep
+    SOURCE_SUBDIR build
+    GIT_REPOSITORY https://github.com/byeolang/indep/
+    GIT_TAG v0.1.0)
+FetchContent_MakeAvailable(indep_dep)
+
 set(moduleName "clog")
 message("\nbuilding ${moduleName}...")
 
