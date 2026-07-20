@@ -2,6 +2,9 @@
 
 All notable changes to this repository will be documented in this file.
 
+## v0.1.7
+- fix header include error. let them export headers as public
+
 ## v0.1.6
 * migrates `indep` project to seperate one to reuse other projects
 
