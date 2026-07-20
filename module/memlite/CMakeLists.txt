@@ -39,6 +39,15 @@ ENDIF(EMSCRIPTEN)
 set_target_properties(${moduleName} PROPERTIES SUFFIX ".${BY_LIBRARY_EXTENSION}")
 target_link_libraries(${moduleName} ${dependencies})
 
+# expose module/ as the public include root so consumers (and this module's own
+# sources) can resolve `module/`-prefixed headers such as #include "memlite/nap.hpp".
+# propagated up the link graph, e.g. memlite -> stela -> byeol.
+target_include_directories(${moduleName}
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
 #       let MSVC follow macro expansion of standard:
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
     target_compile_options(${moduleName} PUBLIC "/Zc:preprocessor")
