@@ -9,7 +9,7 @@ FetchContent_Declare(
     indep_dep
     SOURCE_SUBDIR build
     GIT_REPOSITORY https://github.com/byeolang/indep/
-    GIT_TAG v0.1.0)
+    GIT_TAG v0.1.1)
 FetchContent_MakeAvailable(indep_dep)
 
 set(moduleName "clog")
