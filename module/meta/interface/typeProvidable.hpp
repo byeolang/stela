@@ -11,7 +11,7 @@ namespace by {
      *  hierarchy checking, and safe casting operations.
      */
     class _nout typeProvidable {
-        BY_ME(typeProvidable)
+        BY(ME(typeProvidable))
 
     public:
         nbool operator==(const me& rhs) const;

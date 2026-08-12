@@ -18,7 +18,7 @@ namespace by {
      *  false.
      */
     class _nout nulStela: public stela {
-        BY(ME(nulStela, stela), CLONE(me), INIT_META(nulStela))
+        BY(CLASS(nulStela, stela))
 
     public:
         nulStela();
@@ -28,7 +28,6 @@ namespace by {
         nchar asChar() const override;
         nint asInt() const override;
         nbool asBool() const override;
-        const type& getType() const override;
         nbool isExist() const override;
 
     public:

@@ -34,8 +34,7 @@ namespace by {
      *  memory pool. Planned for future modification.
      */
     class _nout chunks: public allocator {
-        BY_ME(chunks, allocator)
-        BY_INIT_META(me)
+        BY(ME(chunks, allocator))
 
     public:
         //  chunks:

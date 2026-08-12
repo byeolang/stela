@@ -55,8 +55,7 @@ namespace by {
      *     _head = 0, [1, 2, 3, 4]
      */
     class _nout chunk: public allocator {
-        BY_ME(chunk, allocator)
-        BY_INIT_META(me)
+        BY(ME(chunk, allocator))
 
     public:
         //  chunk:

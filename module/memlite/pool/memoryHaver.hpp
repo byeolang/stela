@@ -27,8 +27,7 @@ namespace by {
      *  Note that memoryHaver derived classes each manage different sizes of memory.
      */
     class _nout memoryHaver {
-        BY_ME(memoryHaver)
-        BY_INIT_META(me)
+        BY(ME(memoryHaver))
 
     public:
         virtual ~memoryHaver() {}

@@ -39,8 +39,7 @@ namespace by {
      *  performing binding. This needs improvement when time permits.
      */
     class _nout instance: public typeProvidable, public clonable {
-        BY_ME(instance)
-        BY_INIT_META(me)
+        BY(ADT(instance))
         friend class memliteInternal;
 
     public:

@@ -49,7 +49,7 @@ namespace by {
      *  @endcode
      */
     class _nout stela: public instance {
-        BY(ME(stela, instance), CLONE(me), INIT_META(stela))
+        BY(CLASS(stela, instance))
 
         typedef std::map<std::string, tstr<me>> myMap;
         typedef myMap::iterator iterator;
@@ -118,8 +118,6 @@ namespace by {
 
         iterator begin();
         iterator end();
-
-        const type& getType() const override;
 
         /**
          * @brief Converts the stela object's value to an integer.

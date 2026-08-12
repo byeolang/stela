@@ -77,6 +77,4 @@ namespace by {
     instance* me::operator->() { return get(); }
 
     instance& me::operator*() { return *get(); }
-
-    const type& me::getType() const { return ttype<life>::get(); }
 } // namespace by

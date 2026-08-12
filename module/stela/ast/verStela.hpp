@@ -15,8 +15,7 @@ namespace by {
      *  `major.minor.fix`, and can also express ranges.
      */
     class _nout verStela: public valStela {
-        BY_ME(verStela, valStela)
-        BY_INIT_META(verStela)
+        BY(CLASS(verStela, valStela))
 
     public:
         verStela(int major, int minor, int fix);
@@ -35,7 +34,6 @@ namespace by {
         nint asMajor() const;
         nint asMinor() const;
         nint asFix() const;
-        const type& getType() const override;
 
     private:
         static nint _isFromBigger(nint from, nint to);

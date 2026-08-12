@@ -19,8 +19,7 @@ namespace by {
      *  handling that block size. If none exist, creates lazily.
      */
     class _nout pool: public memoryHaver {
-        BY_ME(pool, memoryHaver)
-        BY_INIT_META(me)
+        BY(ME(pool, memoryHaver))
 
     public:
         //  pool:

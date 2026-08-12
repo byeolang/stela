@@ -19,8 +19,7 @@ namespace by {
      *  is frequently used not only in memlite but throughout the byeol project.
      */
     class _nout allocator: public memoryHaver {
-        BY_ME(allocator)
-        BY_INIT_META(me)
+        BY(ME(allocator))
 
     public:
         //  allocator:

@@ -14,8 +14,7 @@ namespace by {
      *  to control classes or issuing commands for core memlite operations.
      */
     class _nout instancer {
-        BY_ME(instancer)
-        BY_INIT_META(me)
+        BY(ME(instancer))
         friend class memliteInternal;
 
     public:

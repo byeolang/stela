@@ -27,8 +27,6 @@ namespace by {
         return asInt() != 0;
     }
 
-    const type& me::getType() const { return ttype<me>::get(); }
-
     std::string me::toLower(std::string it) {
         transform(it.begin(), it.end(), it.begin(), ::tolower);
         return it;

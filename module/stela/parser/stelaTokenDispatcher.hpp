@@ -12,6 +12,8 @@ namespace by {
      *  during the parsing process. Supports adding tokens to front and back.
      */
     class _nout stelaTokenDispatcher {
+        BY(ME(stelaTokenDispatcher))
+
     public:
         void add(nint newToken);
         void addFront(nint newToken);

@@ -19,8 +19,7 @@ namespace by {
      *  pool. _id is for identifying objects, see @ref id for details.
      */
     class _nout life: public typeProvidable, public tbindable<instance> {
-        BY_ME(life)
-        BY_INIT_META(me)
+        BY(ADT(life))
 
     public:
         //  life:
@@ -77,8 +76,6 @@ namespace by {
 
         //  Instance:
         id getId() const;
-        //  typeProvidable:
-        const type& getType() const override;
 
         /**
          * @brief Retrieves life object associated with given id

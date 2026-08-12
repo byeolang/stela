@@ -14,8 +14,7 @@ namespace by {
      *  to instances without affecting their lifetime. Uses configurable tactics for memory management.
      */
     template <typename T, typename TACTIC = weakTactic> class tweak: public binder {
-        BY_ME(tweak, binder)
-        BY_INIT_META(me)
+        BY(ME(tweak, binder), INIT_META(me))
 
     public:
         tweak();

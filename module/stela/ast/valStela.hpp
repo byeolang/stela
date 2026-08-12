@@ -15,7 +15,7 @@ namespace by {
      *  If type conversion fails, an exception is thrown, so be careful.
      */
     class _nout valStela: public stela {
-        BY(ME(valStela, stela), CLONE(me), INIT_META(valStela))
+        BY(CLASS(valStela, stela))
 
     public:
         valStela(const std::string& rawVal, const std::string& name = "");
@@ -29,7 +29,6 @@ namespace by {
         nchar asChar() const override;
         nint asInt() const override;
         nbool asBool() const override;
-        const type& getType() const override;
 
     private:
         static std::string toLower(std::string it);

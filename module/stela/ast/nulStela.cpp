@@ -17,8 +17,6 @@ namespace by {
 
     nbool me::asBool() const { return false; }
 
-    const type& me::getType() const { return ttype<me>::get(); }
-
     nbool me::isExist() const { return false; }
 
     me& me::get() {

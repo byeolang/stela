@@ -69,8 +69,6 @@ namespace by {
 
     me::iterator me::end() { return _subs.end(); }
 
-    const type& me::getType() const { return ttype<me>::get(); }
-
     nint me::asInt() const { return 0; }
 
     nchar me::asChar() const { return '\0'; }

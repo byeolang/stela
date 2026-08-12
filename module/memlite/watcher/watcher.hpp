@@ -18,8 +18,7 @@ namespace by {
      *  instance uses `operator delete()` to make @ref instancer execute memory release work.
      */
     class _nout watcher: public chunk {
-        BY_ME(watcher, chunk)
-        BY_INIT_META(me)
+        BY(ME(watcher, chunk))
 
     public:
         //  watcher:

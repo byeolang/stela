@@ -52,8 +52,6 @@ namespace by {
 
     nint me::asFix() const { return _fix; }
 
-    const type& me::getType() const { return ttype<me>::get(); }
-
     nint me::_isFromBigger(nint from, nint to) {
         if(from > to) return 1;
         if(from == to) return 0;
