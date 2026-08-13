@@ -1,8 +1,9 @@
 #include "stela/ast/nulStela.hpp"
+#include "stela/visitor/stelaVisitor.hpp"
 
 namespace by {
 
-    BY_DEF_ME(nulStela)
+    BY(DEF_ME(nulStela), DEF_VISIT())
 
     me::nulStela(): super() {}
 

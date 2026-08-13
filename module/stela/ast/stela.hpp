@@ -48,6 +48,9 @@ namespace by {
      *      ASSERT_EQ(ver.asFix(), 8);
      *  @endcode
      */
+    class stelaVisitor;
+    class stelaVisitInfo;
+
     class _nout stela: public instance {
         BY(CLASS(stela, instance))
 
@@ -151,6 +154,11 @@ namespace by {
          * @return true if the stela object holds a value, false if it represents a null or non-existent entry.
          */
         virtual nbool isExist() const;
+
+    public:
+        /** @brief Dispatch entry for @ref stelaVisitor. Base implementation calls
+         *         `v.visit(i, *this)`; subclasses override via the VISIT macro. */
+        virtual void accept(const stelaVisitInfo& i, stelaVisitor& v);
 
     private:
         myMap _subs;

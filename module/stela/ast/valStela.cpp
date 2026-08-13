@@ -1,9 +1,10 @@
 #include "stela/ast/valStela.hpp"
+#include "stela/visitor/stelaVisitor.hpp"
 
 namespace by {
-    BY(DEF_ME(valStela))
+    BY(DEF_ME(valStela, stela), DEF_VISIT())
 
-    me::valStela(const std::string& rawVal, const std::string& name): _rawVal(rawVal) {}
+    me::valStela(const std::string& rawVal, const std::string& name): super(name), _rawVal(rawVal) {}
 
     me::valStela(nbool val, const std::string& name): super(name), _rawVal(val ? "true" : "false") {}
 
@@ -15,7 +16,7 @@ namespace by {
 
     const std::string& me::asStr() const { return _rawVal; }
 
-    nchar me::asChar() const { return _rawVal[0]; }
+    nchar me::asChar() const { return _rawVal.empty() ? '\0' : _rawVal[0]; }
 
     nint me::asInt() const { return std::stoi(_rawVal); }
 

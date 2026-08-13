@@ -1,8 +1,9 @@
 #include "stela/ast/verStela.hpp"
+#include "stela/visitor/stelaVisitor.hpp"
 
 namespace by {
 
-    BY(DEF_ME(verStela))
+    BY(DEF_ME(verStela, valStela), DEF_VISIT())
 
     me::verStela(int major, int minor, int fix):
         super(std::to_string(major) + DELIMITER + std::to_string(minor) + DELIMITER + std::to_string(fix)),

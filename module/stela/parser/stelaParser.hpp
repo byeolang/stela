@@ -165,12 +165,15 @@ namespace by {
         //      def:
         //          var:
         /**
-         * @brief Creates a @ref valStela object from a primitive value.
-         * @tparam T The primitive type of the argument (e.g., int, bool, string).
-         * @param arg The primitive value.
-         * @return A pointer to a newly created @ref valStela instance.
+         * @brief Creates a value stela node from a primitive value.
+         * @details Strings become @ref strStela; numeric / boolean values become
+         *          @ref valStela The distinction lets @ref stelaWriter re-emit
+         *          strings with the surrounding quotes required by the grammar.
          */
-        template <typename T> stela* onPrimitive(const T& arg) { return new valStela(arg); }
+        template <typename T> stela* onPrimitive(const T& arg) {
+            if constexpr(std::is_same_v<T, std::string>) return new strStela(arg);
+            else return new valStela(arg);
+        }
 
         verStela* onVer(const std::string& version);
 

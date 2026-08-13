@@ -1,5 +1,6 @@
 #include "stela/ast/stela.hpp"
 #include "stela/ast/nulStela.hpp"
+#include "stela/visitor/stelaVisitor.hpp"
 
 namespace by {
 
@@ -7,7 +8,7 @@ namespace by {
         static nulStela inner;
     }
 
-    BY_DEF_ME(stela)
+    BY(DEF_ME(stela), DEF_VISIT())
 
     me::stela(std::initializer_list<me*> subs, const std::string& name): _name(name) { add(subs); }
 

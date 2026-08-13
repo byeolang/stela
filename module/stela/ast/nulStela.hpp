@@ -18,7 +18,7 @@ namespace by {
      *  false.
      */
     class _nout nulStela: public stela {
-        BY(CLASS(nulStela, stela))
+        BY(CLASS(nulStela, stela), VISIT())
 
     public:
         nulStela();

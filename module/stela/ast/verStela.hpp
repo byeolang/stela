@@ -15,7 +15,7 @@ namespace by {
      *  `major.minor.fix`, and can also express ranges.
      */
     class _nout verStela: public valStela {
-        BY(CLASS(verStela, valStela))
+        BY(CLASS(verStela, valStela), VISIT())
 
     public:
         verStela(int major, int minor, int fix);
