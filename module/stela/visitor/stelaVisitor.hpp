@@ -26,7 +26,7 @@ namespace by {
      *  stela trees are pure (no shared subgraphs), so unlike byeol's visitor no
      *  visited-set is maintained.
      */
-    class _nout stelaVisitor : public typeProvidable, public clonable {
+    class _nout stelaVisitor: public typeProvidable, public clonable {
         BY(CLASS(stelaVisitor))
 
     public:

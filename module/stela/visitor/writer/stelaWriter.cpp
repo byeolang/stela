@@ -26,7 +26,7 @@ namespace by {
 
     nbool me::onVisit(const stelaVisitInfo& i, stela& it) {
         // depth 0 is the compilation-unit root — never emitted; only descended into.
-        WHEN(i.depth == 0).ret(true);
+        WHEN(i.depth == 0) .ret(true);
         _ss << _indent(i.depth) << "def " << it.getName() << "\n";
         return true;
     }

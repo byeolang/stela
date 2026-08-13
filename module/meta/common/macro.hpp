@@ -29,18 +29,18 @@ private:
 //      defines super meta type.
 //      for instance, if you set TYPE(type), then when you call getType() of your class,
 //      it will returns instance of type of type.
-#define __BY__DECL_TYPE(METATYPE)                                      \
-public:                                                                \
-    typedef METATYPE metaType;                                         \
+#define __BY__DECL_TYPE(METATYPE)                                                \
+public:                                                                          \
+    typedef METATYPE metaType;                                                   \
     const __BY__BASE_TYPE& getType() const override { return ttype<me>::get(); } \
-                                                                       \
+                                                                                 \
 private:
 
 // INTERFACE:
 //      marks that this class is abstract.
-#define __BY__DECL_ADT_1(ME) \
-    __BY__DECL_ME_1(ME)      \
-    __BY__DECL_TYPE(__BY__BASE_TYPE)   \
+#define __BY__DECL_ADT_1(ME)         \
+    __BY__DECL_ME_1(ME)              \
+    __BY__DECL_TYPE(__BY__BASE_TYPE) \
     __BY__DECL_INIT_META(ME)
 #define __BY__DECL_ADT_2(ME, SUPER) __BY__DECL_ADT_3(ME, SUPER, __BY__BASE_TYPE)
 #define __BY__DECL_ADT_3(ME, SUPER, SUPERTYPE) \
