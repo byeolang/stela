@@ -21,6 +21,7 @@ namespace by {
 
     public:
         valStela(const std::string& rawVal, const std::string& name = "");
+        valStela(const nchar* rawVal, const std::string& name = "");
         valStela(nbool val, const std::string& name = "");
         valStela(nint val, const std::string& name = "");
         valStela(nflt val, const std::string& name = "");

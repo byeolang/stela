@@ -39,7 +39,7 @@ namespace by {
 
     nbool me::has(const std::string& name) const { return _subs.find(name) != _subs.end(); }
 
-    void me::add(const stela& new1) { _subs.insert(make_pair(new1.getName(), tstr<me>(new1))); }
+    void me::add(const stela& new1) { _subs.insert_or_assign(new1.getName(), tstr<me>(new1)); }
 
     void me::add(std::initializer_list<stela*> subs) {
         for(auto e: subs)
