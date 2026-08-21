@@ -6,9 +6,7 @@ namespace by {
 
     me::valStela(const std::string& rawVal, const std::string& name): super(name), _rawVal(rawVal) {}
 
-    me::valStela(const nchar* rawVal, const std::string& name):
-        super(name),
-        _rawVal(rawVal ? rawVal : "") {}
+    me::valStela(const nchar* rawVal, const std::string& name): super(name), _rawVal(rawVal ? rawVal : "") {}
 
     me::valStela(nbool val, const std::string& name): super(name), _rawVal(val ? "true" : "false") {}
 
