@@ -11,7 +11,7 @@ TEST(fsystemTest, recursiveDirSearchAtBin) {
     while(root.next()) {
         if(*root == "../build/CMakeLists.txt") {
             buildFound = true;
-            ASSERT_EQ(root.getName(), "CMakeLists.txt");
+            ASSERT_EQ(root->filename(), "CMakeLists.txt");
             ASSERT_EQ(root.getDir(), "../build");
             break;
         }
@@ -27,7 +27,7 @@ TEST(fsystemTest, dirSearchWithPathEndsWithSlash) {
     while(root.next()) {
         if(*root == "../build/CMakeLists.txt") {
             buildFound = true;
-            ASSERT_EQ(root.getName(), "CMakeLists.txt");
+            ASSERT_EQ(root->filename(), "CMakeLists.txt");
             ASSERT_EQ(root.getDir(), "../build");
             break;
         }
