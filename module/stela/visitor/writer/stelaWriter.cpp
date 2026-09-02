@@ -17,7 +17,7 @@ namespace by {
     nbool me::writeFile(stela& root, const std::string& path) {
         std::ofstream fout(path);
         if(!fout.is_open()) {
-            BY_I("stelaWriter::emitToFile: cannot open '%s' for writing", path.c_str());
+            BY_I("stelaWriter::writeFile: cannot open '%s' for writing", path.c_str());
             return false;
         }
         fout << write(root);
@@ -32,39 +32,41 @@ namespace by {
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, valStela& it) {
-        _ss << _indent(i.depth) << it.getName() << " := " << it.asStr() << "\n";
+        _open(i, it) << it.asStr();
+        _close(i);
         return true;
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, strStela& it) {
-        _ss << _indent(i.depth) << it.getName() << " := \"" << it.asStr() << "\"\n";
-        return true;
-    }
-
-    nbool me::onVisit(const stelaVisitInfo& i, verStela& it) {
-        _ss << _indent(i.depth) << it.getName() << " := " << it.asStr() << "\n";
+        _open(i, it) << "\"" << it.asStr() << "\"";
+        _close(i);
         return true;
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, arrStela& it) {
-        _ss << _indent(i.depth) << it.getName() << " := " << _literal(it) << "\n";
-        return false; // rendered inline above; the elements must not be emitted again.
+        _open(i, it) << "{";
+        return true;
     }
 
-    std::string me::_literal(stela& it) {
-        if(arrStela* arr = it.cast<arrStela>()) {
-            std::stringstream ss;
-            ss << "{";
-            for(ncnt n = 0; n < arr->len(); ++n) {
-                if(n) ss << ", ";
-                ss << _literal(arr->sub(n));
-            }
-            ss << "}";
-            return ss.str();
+    void me::onLeave(const stelaVisitInfo& i, arrStela& it) {
+        _ss << "}";
+        _close(i);
+    }
+
+    std::stringstream& me::_open(const stelaVisitInfo& i, stela& it) {
+        // an element has no name of its own: a comma separates it from the previous one.
+        if(i.parent TO(template cast<arrStela>())) {
+            if(i.index) _ss << ", ";
+            return _ss;
         }
 
-        if(it.cast<strStela>()) return "\"" + it.asStr() + "\"";
-        return it.asStr();
+        _ss << _indent(i.depth) << it.getName() << " := ";
+        return _ss;
+    }
+
+    void me::_close(const stelaVisitInfo& i) {
+        WHEN(i.parent TO(template cast<arrStela>())) .ret();
+        _ss << "\n";
     }
 
     std::string me::_indent(nint depth) {

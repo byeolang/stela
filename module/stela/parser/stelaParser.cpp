@@ -147,8 +147,8 @@ namespace by {
     }
 
     void me::_addElem(stela& arr, stela& elem) {
-        // elements arrive nameless, so add() would key them all on "" and let each
-        // one overwrite the last. numbering them makes every element its own child.
+        // elements arrive nameless: add() would key them all on "" and each would
+        // overwrite the last.
         elem.setName(_idxName(arr.len()));
         arr.add(elem);
     }
@@ -157,7 +157,7 @@ namespace by {
         // zero-padded so the child map's lexicographic key order matches numeric
         // order: bare "10" would sort ahead of "2" and break sub(nidx).
         std::string it = std::to_string(n);
-        if(it.size() >= IDX_WIDTH) return it; // past IDX_WIDTH digits order breaks.
+        if(it.size() >= IDX_WIDTH) return it;
         return std::string(IDX_WIDTH - it.size(), '0') + it;
     }
 
@@ -197,7 +197,7 @@ namespace by {
 
     tstr<stela> me::parseFromFile(const nchar* path) {
         WHEN_NUL(path).ret(nullptr);
-        return parseFromFile(std::string(path)); // don't recurse into this same overload.
+        return parseFromFile(std::string(path));
     }
 
     tstr<stela> me::parse(const std::string& codes) {
@@ -231,7 +231,7 @@ namespace by {
 
     tstr<stela> me::parse(const nchar* codes) {
         WHEN_NUL(codes).ret(nullptr);
-        return parse(std::string(codes)); // don't recurse into this same overload.
+        return parse(std::string(codes));
     }
 
     nbool me::isInit() const { return _mode; }

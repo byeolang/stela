@@ -23,8 +23,6 @@ namespace by {
     me::operator nbool() const { return isExist(); }
 
     me& me::sub(const std::string& name) {
-        // don't use _subs[name]: operator[] inserts a blank child on a miss, which
-        // would inflate len() and make the writer emit a nameless node.
         auto found = _subs.find(name);
         WHEN(found == _subs.end()) .ret(inner);
 
