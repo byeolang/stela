@@ -182,8 +182,18 @@ namespace by {
         //          obj:
         stela* onDefOrigin(const std::string& name, stela& blk);
         //          container:
-        stela* onDefArray(const stela& elem);
-        stela* onDefArray(stela& as, const stela& elem);
+        /**
+         * @brief Creates an empty @ref arrStela.
+         */
+        stela* onDefArray();
+        /**
+         * @brief Creates an @ref arrStela holding @p elem as its first element.
+         */
+        stela* onDefArray(stela& elem);
+        /**
+         * @brief Appends @p elem to the @ref arrStela @p as.
+         */
+        stela* onDefArray(stela& as, stela& elem);
         //          file:
         stela* onCompilationUnit(stela* blk);
 
@@ -205,6 +215,8 @@ namespace by {
         nint _onTokenEndOfInlineBlock(nint tok);
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);
         tstr<stela> _finalize();
+        void _addElem(stela& arr, stela& elem);
+        static std::string _idxName(ncnt n);
 
     private:
         stelaTokenScan* _mode;
@@ -215,5 +227,10 @@ namespace by {
         std::vector<nint> _states;
         stelaSmartDedent _dedent;
         std::vector<std::string> _errs;
+
+    private:
+        /** @brief Digit count of an @ref arrStela element name. Arrays longer than
+         *         10^IDX_WIDTH lose their index ordering. */
+        static constexpr ncnt IDX_WIDTH = 4;
     };
 } // namespace by
