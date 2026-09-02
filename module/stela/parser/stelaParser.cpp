@@ -133,11 +133,32 @@ namespace by {
         return &rhs;
     }
 
-    stela* me::onDefArray(const stela& elem) { return new stela{elem}; }
+    stela* me::onDefArray() { return new arrStela(); }
 
-    stela* me::onDefArray(stela& as, const stela& elem) {
-        as.add(elem);
+    stela* me::onDefArray(stela& elem) {
+        arrStela* ret = new arrStela();
+        _addElem(*ret, elem);
+        return ret;
+    }
+
+    stela* me::onDefArray(stela& as, stela& elem) {
+        _addElem(as, elem);
         return &as;
+    }
+
+    void me::_addElem(stela& arr, stela& elem) {
+        // elements arrive nameless, so add() would key them all on "" and let each
+        // one overwrite the last. numbering them makes every element its own child.
+        elem.setName(_idxName(arr.len()));
+        arr.add(elem);
+    }
+
+    std::string me::_idxName(ncnt n) {
+        // zero-padded so the child map's lexicographic key order matches numeric
+        // order: bare "10" would sort ahead of "2" and break sub(nidx).
+        std::string it = std::to_string(n);
+        if(it.size() >= IDX_WIDTH) return it; // past IDX_WIDTH digits order breaks.
+        return std::string(IDX_WIDTH - it.size(), '0') + it;
     }
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {

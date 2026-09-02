@@ -46,6 +46,27 @@ namespace by {
         return true;
     }
 
+    nbool me::onVisit(const stelaVisitInfo& i, arrStela& it) {
+        _ss << _indent(i.depth) << it.getName() << " := " << _literal(it) << "\n";
+        return false; // rendered inline above; the elements must not be emitted again.
+    }
+
+    std::string me::_literal(stela& it) {
+        if(arrStela* arr = it.cast<arrStela>()) {
+            std::stringstream ss;
+            ss << "{";
+            for(ncnt n = 0; n < arr->len(); ++n) {
+                if(n) ss << ", ";
+                ss << _literal(arr->sub(n));
+            }
+            ss << "}";
+            return ss.str();
+        }
+
+        if(it.cast<strStela>()) return "\"" + it.asStr() + "\"";
+        return it.asStr();
+    }
+
     std::string me::_indent(nint depth) {
         // root is skipped, so a top-level child (depth 1) sits at column 0.
         return std::string((depth - 1) * 4, ' ');

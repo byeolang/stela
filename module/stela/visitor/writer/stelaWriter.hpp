@@ -50,9 +50,12 @@ namespace by {
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, verStela& it) override;
+        nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;
 
     private:
         std::string _indent(nint depth);
+        /** @brief Renders a value node as a stela literal. Arrays recurse into `{a, b}`. */
+        std::string _literal(stela& it);
 
     private:
         std::stringstream _ss;
