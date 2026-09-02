@@ -9,19 +9,22 @@ namespace by {
 
     /** @ingroup stela
      *  @brief Traversal context handed to every stelaVisitor callback.
-     *  @details Deliberately smaller than byeol's visitInfo: stela's map-of-children
-     *  layout has no ordering, so index/len are irrelevant. Only the child's name,
-     *  its parent, and its depth (for indentation and structural queries) are kept.
+     *  @details Mirrors byeol's visitInfo, minus `additionalLen`, which has no stela
+     *  counterpart. `index` and `len` place the child among its siblings — for an
+     *  @ref arrStela, its position in the array — so a visitor never has to rebuild
+     *  what @ref stelaVisitor::onTraverse already knows.
      */
     class _nout stelaVisitInfo {
         BY(ME(stelaVisitInfo))
 
     public:
-        stelaVisitInfo(const std::string& newName, stela* newParent, nint newDepth);
+        stelaVisitInfo(const std::string& newName, stela* newParent, nidx newIndex, ncnt newLen, nint newDepth);
 
     public:
         std::string name;
         stela* parent;
+        nidx index;
+        ncnt len;
         nint depth;
     };
 } // namespace by

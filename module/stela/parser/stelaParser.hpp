@@ -182,17 +182,8 @@ namespace by {
         //          obj:
         stela* onDefOrigin(const std::string& name, stela& blk);
         //          container:
-        /**
-         * @brief Creates an empty @ref arrStela.
-         */
         stela* onDefArray();
-        /**
-         * @brief Creates an @ref arrStela holding @p elem as its first element.
-         */
         stela* onDefArray(stela& elem);
-        /**
-         * @brief Appends @p elem to the @ref arrStela @p as.
-         */
         stela* onDefArray(stela& as, stela& elem);
         //          file:
         stela* onCompilationUnit(stela* blk);

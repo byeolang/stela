@@ -28,7 +28,7 @@ namespace by {
      *  @section usage Usage
      *  @code
      *      std::string src = stelaWriter().write(*root);
-     *      stelaWriter().writeToFile(*root, "out.by");
+     *      stelaWriter().writeFile(*root, "out.by");
      *  @endcode
      */
     class _nout stelaWriter: public stelaVisitor {
@@ -49,13 +49,13 @@ namespace by {
             protected: nbool onVisit(const stelaVisitInfo& i, stela& it) override;
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
-        nbool onVisit(const stelaVisitInfo& i, verStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;
+        void onLeave(const stelaVisitInfo& i, arrStela& it) override;
 
     private:
         std::string _indent(nint depth);
-        /** @brief Renders a value node as a stela literal. Arrays recurse into `{a, b}`. */
-        std::string _literal(stela& it);
+        std::stringstream& _open(const stelaVisitInfo& i, stela& it);
+        void _close(const stelaVisitInfo& i);
 
     private:
         std::stringstream _ss;

@@ -11,7 +11,7 @@ namespace by {
 
     void me::work(stela& root) {
         _visited.clear();
-        root.accept(stelaVisitInfo(root.getName(), nullptr, 0), *this);
+        root.accept(stelaVisitInfo(root.getName(), nullptr, 0, 1, 0), *this);
     }
 
 #define X(T)                                                                                 \
@@ -39,9 +39,12 @@ namespace by {
     void me::onLeave(const stelaVisitInfo& i, stela& it) {}
 
     void me::onTraverse(const stelaVisitInfo& i, stela& it) {
-        for(auto e = it.begin(); e != it.end(); ++e) {
+        // the loop already knows each child's position; visitors shouldn't rebuild it.
+        ncnt len = it.len();
+        nidx idx = 0;
+        for(auto e = it.begin(); e != it.end(); ++e, ++idx) {
             stela& child = e->second.get() OR_CONTINUE;
-            child.accept(stelaVisitInfo(child.getName(), &it, i.depth + 1), *this);
+            child.accept(stelaVisitInfo(child.getName(), &it, idx, len, i.depth + 1), *this);
         }
     }
 

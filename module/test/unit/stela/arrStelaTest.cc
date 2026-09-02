@@ -67,7 +67,6 @@ TEST_F(arrStelaTest, iteratorWalksInIndexOrder) {
         stela& elem = e.second.get() OR_CONTINUE;
         ASSERT_EQ(elem.asInt(), expect);
 
-        // element keys are zero-padded to a fixed width.
         char key[16];
         snprintf(key, sizeof(key), "%04d", (int) expect);
         ASSERT_STREQ(e.first.c_str(), key);
@@ -77,7 +76,6 @@ TEST_F(arrStelaTest, iteratorWalksInIndexOrder) {
 }
 
 TEST_F(arrStelaTest, namedChildrenKeepLexicographicOrder) {
-    // element naming must not disturb ordinary named children.
     tstr<stela> root = stelaParser().parse("zebra := 1\napple := 2\nmango := 3\n");
     ASSERT_TRUE(root);
 
@@ -112,6 +110,19 @@ TEST_F(arrStelaTest, writeQuotesStringElements) {
     ASSERT_TRUE(root);
 
     ASSERT_STREQ(stelaWriter().write(*root).c_str(), "names := {\"a\", \"b\"}\n");
+}
+
+TEST_F(arrStelaTest, nestedArraysStayInline) {
+    tstr<stela> root = stelaParser().parse("grid := {{1, 2}, {3, 4}, {}}\n");
+    ASSERT_TRUE(root);
+
+    stela& grid = root->sub("grid");
+    ASSERT_EQ(grid.len(), 3);
+    ASSERT_EQ(grid.sub(0).len(), 2);
+    ASSERT_EQ(grid.sub(1).sub(0).asInt(), 3);
+    ASSERT_EQ(grid.sub(2).len(), 0);
+
+    ASSERT_STREQ(stelaWriter().write(*root).c_str(), "grid := {{1, 2}, {3, 4}, {}}\n");
 }
 
 TEST_F(arrStelaTest, canonicalFixedPointWithArrays) {
