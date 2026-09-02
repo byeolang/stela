@@ -176,7 +176,7 @@ namespace by {
 
     tstr<stela> me::parseFromFile(const nchar* path) {
         WHEN_NUL(path).ret(nullptr);
-        return parseFromFile(path);
+        return parseFromFile(std::string(path)); // don't recurse into this same overload.
     }
 
     tstr<stela> me::parse(const std::string& codes) {
@@ -210,7 +210,7 @@ namespace by {
 
     tstr<stela> me::parse(const nchar* codes) {
         WHEN_NUL(codes).ret(nullptr);
-        return parse(codes);
+        return parse(std::string(codes)); // don't recurse into this same overload.
     }
 
     nbool me::isInit() const { return _mode; }
