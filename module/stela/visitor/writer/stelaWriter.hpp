@@ -10,14 +10,14 @@ namespace by {
      *  @details Implemented as a @ref stelaVisitor. writes a canonical, lossy form.
      *  What is NOT preserved:
      *   - comments in the original file
-     *   - original whitespace, blank lines, and indentation width beyond the writeter's
+     *   - original whitespace, blank lines, and indentation width beyond the writer's
      *     configured indent
      *   - the original insertion order of children (`std::map` inside @ref stela sorts
      *     them alphabetically)
      *   - the exact literal spelling of numbers (e.g. `1_000` becomes `1000`)
      *
      *  What IS preserved: values and structure. Round-trip
-     *  `parse -> set -> write -> parse` gives the same value tree, and
+     *  `parse -> edit -> write -> parse` gives the same value tree, and
      *  `write -> parse -> write` produces the same string (canonical fixed point).
      *
      *  @section root_handling Root handling
@@ -44,9 +44,10 @@ namespace by {
          * @return true on success. false if the file could not be opened for writing.
          */
         nbool writeFile(stela& root, const std::string& path);
-        nbool writeFile(stela& root, const nchar* path) BY_SIDE_FUNC(path, writeFile(root, std::string(path)), false)
+        nbool writeFile(stela& root, const nchar* path) BY_SIDE_FUNC(path, writeFile(root, std::string(path)), false);
 
-            protected: nbool onVisit(const stelaVisitInfo& i, stela& it) override;
+    protected:
+        nbool onVisit(const stelaVisitInfo& i, stela& it) override;
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;
