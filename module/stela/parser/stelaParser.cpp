@@ -169,9 +169,13 @@ namespace by {
     stela* me::onCompilationUnit(stela* subpod) {
         WHEN_NUL(subpod).err("subpod is null").ret(nullptr);
 
-        subpod->setName("root");
+        // the grammar cannot tell the outermost block from a nested one, so it hands
+        // over an ordinary defStela. binding it first gives it an owner, and the copy
+        // adopts its children before the rebind drops it.
         _root.bind(subpod);
-        return subpod;
+        rootStela* ret = new rootStela(*subpod, "root");
+        _root.bind(ret);
+        return ret;
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }

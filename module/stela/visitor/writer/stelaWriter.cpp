@@ -10,11 +10,17 @@ namespace by {
         _ss.str("");
         _ss.clear();
 
+        // a bare block never came from source, so writing a `def` line for it would
+        // invent syntax no file ever contained.
+        WHEN(!root.cast<rootStela>()) .ret("");
+
         work(root);
         return _ss.str();
     }
 
     nbool me::writeFile(stela& root, const std::string& path) {
+        WHEN(!root.cast<rootStela>()) .ret(false);
+
         std::ofstream fout(path);
         if(!fout.is_open()) {
             BY_I("stelaWriter::writeFile: cannot open '%s' for writing", path.c_str());
@@ -24,9 +30,12 @@ namespace by {
         return fout.good();
     }
 
+    nbool me::onVisit(const stelaVisitInfo& i, rootStela& it) {
+        // no `def` line produced the compilation unit, so none is written back.
+        return true;
+    }
+
     nbool me::onVisit(const stelaVisitInfo& i, defStela& it) {
-        // depth 0 is the compilation-unit root — never emitted; only descended into.
-        WHEN(i.depth == 0) .ret(true);
         _ss << _indent(i.depth) << "def " << it.getName() << "\n";
         return true;
     }
@@ -70,7 +79,8 @@ namespace by {
     }
 
     std::string me::_indent(nint depth) {
-        // root is skipped, so a top-level child (depth 1) sits at column 0.
+        // write() rejects a non-rootStela, so depth is always >= 1 here and the
+        // subtraction cannot underflow.
         return std::string((depth - 1) * 4, ' ');
     }
 } // namespace by

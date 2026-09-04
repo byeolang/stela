@@ -3,6 +3,7 @@
 
 #include "stela/ast/point.hpp"
 #include "stela/ast/defStela.hpp"
+#include "stela/ast/rootStela.hpp"
 #include "stela/ast/arrStela.hpp"
 #include "stela/ast/strStela.hpp"
 #include "stela/ast/verStela.hpp"

@@ -46,7 +46,7 @@ def man
     )SRC");
     ASSERT_TRUE(root);
 
-    // the implicit compilation unit is a block too, not a bare stela.
+    // the implicit compilation unit is a block too -- a rootStela, which is one.
     ASSERT_TRUE(root->cast<defStela>() != nullptr);
 
     stela& man = root->sub("man");
@@ -74,7 +74,8 @@ def group
     dispatchProbe probe;
     probe.work(*root);
 
-    // root and group, in visit order.
+    // root and group, in visit order -- the probe ignores rootStela, so the
+    // compilation unit chains up to the defStela overload like any other block.
     ASSERT_EQ(probe.defs.size(), (size_t) 2);
     ASSERT_STREQ(probe.defs[1].c_str(), "group");
 
@@ -88,7 +89,9 @@ def group
 }
 
 TEST_F(defStelaTest, handBuiltBlockWritesAsDefSyntax) {
-    defStela root("root");
+    // a whole document, so the outermost node is a rootStela: a defStela here would
+    // ask the writer to emit a `def root` line that no source ever contained.
+    rootStela root("root");
     defStela* group = new defStela("group");
     group->add(new strStela("alice", "member"));
     root.add(group);
