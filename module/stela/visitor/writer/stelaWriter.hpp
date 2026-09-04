@@ -47,7 +47,7 @@ namespace by {
         nbool writeFile(stela& root, const nchar* path) BY_SIDE_FUNC(path, writeFile(root, std::string(path)), false);
 
     protected:
-        nbool onVisit(const stelaVisitInfo& i, stela& it) override;
+        nbool onVisit(const stelaVisitInfo& i, defStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;

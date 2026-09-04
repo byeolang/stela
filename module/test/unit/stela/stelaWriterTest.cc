@@ -80,7 +80,7 @@ stub := 0
 // §7.4 (3) container edit via set/setVersion produces valid stela syntax
 //   (parseable after write).
 TEST_F(stelaWriterTest, containerEditByFreshSet) {
-    stela root("root");
+    defStela root("root");
     root.set("name", std::string("byeol"));
     root.set("age", (nint) 10);
     root.setVersion("ver", 1, 0, 0);

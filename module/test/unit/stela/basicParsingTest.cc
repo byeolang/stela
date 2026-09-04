@@ -280,7 +280,7 @@ TEST_F(basicParsing, testStelaDelMethod) {
 }
 
 TEST_F(basicParsing, testStelaSetName) {
-    stela node("original");
+    defStela node("original");
     ASSERT_STREQ(node.getName().c_str(), "original");
 
     node.setName("renamed");
@@ -340,7 +340,7 @@ TEST_F(basicParsing, testStelaCStringOperator) {
 }
 
 TEST_F(basicParsing, testStelaDefaultValues) {
-    stela emptyNode("empty");
+    defStela emptyNode("empty");
 
     ASSERT_EQ(emptyNode.asInt(), 0);
     ASSERT_EQ(emptyNode.asChar(), '\0');

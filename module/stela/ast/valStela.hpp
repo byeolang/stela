@@ -6,18 +6,20 @@
 namespace by {
 
     /** @ingroup stela
-     *  @brief ADT base for value-holding stela nodes.
+     *  @brief Value-holding stela node.
      *  @details Holds a scalar value as a raw string in `_rawVal` and converts to
-     *  primitive types on request via `asInt()`, `asBool()`, etc. Concrete leaves
-     *  @ref strStela, @ref verStela) exist purely so visitors can
-     *  discriminate between them; the value-access implementation lives here and is
-     *  reused by every subclass.
+     *  primitive types on request via `asInt()`, `asBool()`, etc.
+     *
+     *  It is concrete, and the parser builds one directly for every numeric and
+     *  boolean literal. The subtypes (@ref strStela, @ref verStela) exist purely so
+     *  visitors can discriminate between them; the value-access implementation lives
+     *  here and is reused by every subclass.
      *
      *  @remark Exception on type conversion failure
      *  If type conversion fails, an exception is thrown, so be careful.
      */
     class _nout valStela: public stela {
-        BY(ADT(valStela, stela), VISIT())
+        BY(CLASS(valStela, stela), VISIT())
 
     public:
         valStela(const std::string& rawVal, const std::string& name = "");

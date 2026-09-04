@@ -6,7 +6,7 @@
 namespace by {
 
     /** @ingroup stela
-     *  @brief Core AST node for stela configuration language
+     *  @brief Abstract AST node for stela configuration language
      *  @details The fundamental unit class of the stela module, providing the following
      *  features:
      *
@@ -21,6 +21,17 @@ namespace by {
      *     are searched by name or traversed. If no child matches the name, nulStela is returned
      *
      *  Similar to @ref node in the core module.
+     *
+     *  @section forms Concrete forms
+     *  stela is an ADT: it carries what every node shares (name, children, value
+     *  conversion) and nothing that belongs to one syntactic form. Instantiate a
+     *  subtype instead:
+     *   - @ref defStela — a named `def` block. This is the form stela itself used to
+     *     stand for, split out so a sibling like @ref arrStela stops inheriting it.
+     *   - @ref arrStela — an inline `{a, b, c}` array.
+     *   - @ref valStela — a scalar, with @ref strStela / @ref verStela distinguishing
+     *     the ones a visitor must tell apart.
+     *   - @ref nulStela — the null object returned for a missing child.
      *
      *  @section usage Usage
      *  Example demonstrates typical usage:
@@ -52,7 +63,7 @@ namespace by {
     class stelaVisitInfo;
 
     class _nout stela: public instance {
-        BY(CLASS(stela, instance))
+        BY(ADT(stela, instance))
 
         typedef std::map<std::string, tstr<me>> myMap;
         typedef myMap::iterator iterator;
