@@ -21,9 +21,10 @@ namespace by {
      *  `write -> parse -> write` produces the same string (canonical fixed point).
      *
      *  @section root_handling Root handling
-     *  The compilation-unit root itself is never emitted as `def <name>` — only its
-     *  children are. This matches the shape of stela source, where the top level is
-     *  implicit.
+     *  The writer serializes a compilation unit, so it accepts only a @ref rootStela:
+     *  handing write() or writeFile() any other node is rejected (empty string / false).
+     *  The @ref rootStela itself is never emitted as `def <name>` — only its children
+     *  are — matching the shape of stela source, where the top level is implicit.
      *
      *  @section usage Usage
      *  @code
@@ -47,6 +48,7 @@ namespace by {
         nbool writeFile(stela& root, const nchar* path) BY_SIDE_FUNC(path, writeFile(root, std::string(path)), false);
 
     protected:
+        nbool onVisit(const stelaVisitInfo& i, rootStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, defStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
