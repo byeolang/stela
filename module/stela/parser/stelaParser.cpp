@@ -114,12 +114,12 @@ namespace by {
         return tok;
     }
 
-    stela* me::onDefBlock() { return new stela(); }
+    stela* me::onDefBlock() { return new defStela(); }
 
     stela* me::onDefBlock(stela* stmt) { return onDefBlock(onDefBlock(), stmt); }
 
     stela* me::onDefBlock(stela* s, stela* stmt) {
-        WHEN_NUL(s).err("s is nul").ret(new stela());
+        WHEN_NUL(s).err("s is nul").ret(new defStela());
         WHEN_NUL(stmt).err("stmt is nul").ret(s);
 
         s->add(stmt);

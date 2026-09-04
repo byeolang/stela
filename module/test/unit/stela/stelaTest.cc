@@ -35,7 +35,7 @@ TEST_F(stelaTest, checkVerStela) {
 TEST_F(stelaTest, addOverwritesChildWithSameName) {
     // stela's strong-ref tstr only takes ownership of heap instances, so real
     // usage (mirrored by stelaParser) always adds `new`-allocated children.
-    stela root("root");
+    defStela root("root");
     root.add(new strStela("first", "key"));
     ASSERT_EQ(root.len(), (ncnt) 1);
     ASSERT_STREQ(root["key"].asStr().c_str(), "first");
@@ -47,7 +47,7 @@ TEST_F(stelaTest, addOverwritesChildWithSameName) {
 
     // batch overload (initializer_list) shares the same insert_or_assign path,
     // so duplicates within one batch also collapse to the last one.
-    stela batch("batch");
+    defStela batch("batch");
     batch.add({new strStela("one", "k"), new strStela("two", "k")});
     ASSERT_EQ(batch.len(), (ncnt) 1);
     ASSERT_STREQ(batch["k"].asStr().c_str(), "two");
