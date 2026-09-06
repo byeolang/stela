@@ -50,6 +50,8 @@ namespace by {
     protected:
         nbool onVisit(const stelaVisitInfo& i, rootStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, defStela& it) override;
+        // numStela, boolStela and verStela all render bare, so one override on
+        // their shared base covers the three of them.
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;

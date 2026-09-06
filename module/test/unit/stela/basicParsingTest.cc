@@ -201,19 +201,19 @@ TEST_F(basicParsing, testManifestScript) {
 }
 
 TEST_F(basicParsing, testValStelaConstructors) {
-    valStela boolVal(true, "flag");
+    boolStela boolVal(true, "flag");
     ASSERT_STREQ(boolVal.asStr().c_str(), "true");
     ASSERT_TRUE(boolVal.asBool());
 
-    valStela boolFalse(false, "disabled");
+    boolStela boolFalse(false, "disabled");
     ASSERT_STREQ(boolFalse.asStr().c_str(), "false");
     ASSERT_FALSE(boolFalse.asBool());
 
-    valStela intVal(42, "number");
+    numStela intVal(42, "number");
     ASSERT_EQ(intVal.asInt(), 42);
     ASSERT_STREQ(intVal.asStr().c_str(), "42");
 
-    valStela floatVal(3.14f, "pi");
+    numStela floatVal(3.14f, "pi");
     ASSERT_STREQ(floatVal.asStr().substr(0, 4).c_str(), "3.14");
 }
 

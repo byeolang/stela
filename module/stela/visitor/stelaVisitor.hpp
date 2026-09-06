@@ -9,6 +9,7 @@ namespace by {
 #define X(T) class T;
 #include "visitee.inl"
 #undef X
+    class valStela;
 
     /** @ingroup stela
      *  @brief Preorder visitor for the stela AST.
@@ -42,6 +43,13 @@ namespace by {
     virtual void onLeave(const stelaVisitInfo& i, T& it);
 #include "visitee.inl"
 #undef X
+
+        // valStela is abstract, so it is not a visitee: no node dispatches to it
+        // directly. It still needs an overload because it is the `super` a concrete
+        // value type chains up to -- without it verStela would skip straight to the
+        // stela& base and a writer would lose its output.
+        virtual nbool onVisit(const stelaVisitInfo& i, valStela& it);
+        virtual void onLeave(const stelaVisitInfo& i, valStela& it);
 
         virtual void visit(const stelaVisitInfo& i, stela& it);
         virtual nbool onVisit(const stelaVisitInfo& i, stela& it);

@@ -28,6 +28,10 @@ namespace by {
 #include "visitee.inl"
 #undef X
 
+    nbool me::onVisit(const stelaVisitInfo& i, valStela& it) { return onVisit(i, (stela&) it); }
+
+    void me::onLeave(const stelaVisitInfo& i, valStela& it) { onLeave(i, (stela&) it); }
+
     void me::visit(const stelaVisitInfo& i, stela& it) {
         WHEN(!_markVisited(it)) .ret();
         if(onVisit(i, it)) onTraverse(i, it);
