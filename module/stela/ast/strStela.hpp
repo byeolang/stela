@@ -16,6 +16,9 @@ namespace by {
         BY(CLASS(strStela, valStela), VISIT())
 
     public:
-        using super::valStela;
+        // spelled out rather than `using super::valStela`: that would inherit the
+        // numeric ctors too, and strStela(42) would silently store "42".
+        strStela(const std::string& rawVal, const std::string& name = "");
+        strStela(const nchar* rawVal, const std::string& name = "");
     };
 } // namespace by

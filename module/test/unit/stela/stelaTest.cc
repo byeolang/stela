@@ -90,11 +90,42 @@ TEST_F(stelaTest, literalPicksStringOverload) {
     ASSERT_STREQ(sStd.asStr().c_str(), "world");
 
     // the real `bool` path is intact — passing an actual bool still routes to (B).
-    valStela vTrue(true);
+    boolStela vTrue(true);
     ASSERT_STREQ(vTrue.asStr().c_str(), "true");
     ASSERT_TRUE(vTrue.asBool());
 
-    valStela vFalse(false);
+    boolStela vFalse(false);
     ASSERT_STREQ(vFalse.asStr().c_str(), "false");
     ASSERT_FALSE(vFalse.asBool());
+}
+
+TEST_F(stelaTest, parserGivesEachLiteralItsOwnType) {
+    // the scanner already separates INTVAL / FLTVAL / BOOLVAL / STRVAL; before the
+    // split onPrimitive collapsed all but strings into one node and the AST lost it.
+    tstr<stela> root = stelaParser().parse(R"SRC(
+def lit
+    count := 42
+    ratio := 1.5
+    flag := true
+    name := "byeol"
+    ver := 1.0.8
+    )SRC");
+    ASSERT_TRUE(root);
+
+    stela& lit = root->sub("lit");
+    ASSERT_TRUE(lit["count"].cast<numStela>() != nullptr);
+    ASSERT_TRUE(lit["ratio"].cast<numStela>() != nullptr);
+    ASSERT_TRUE(lit["flag"].cast<boolStela>() != nullptr);
+    ASSERT_TRUE(lit["name"].cast<strStela>() != nullptr);
+    ASSERT_TRUE(lit["ver"].cast<verStela>() != nullptr);
+
+    // a number is not a boolean and vice versa: the two used to be the same class.
+    ASSERT_TRUE(lit["count"].cast<boolStela>() == nullptr);
+    ASSERT_TRUE(lit["flag"].cast<numStela>() == nullptr);
+
+    // every one of them is still a valStela, which is what keeps the writer's single
+    // bare-value overload serving all of them.
+    ASSERT_TRUE(lit["count"].cast<valStela>() != nullptr);
+    ASSERT_TRUE(lit["flag"].cast<valStela>() != nullptr);
+    ASSERT_TRUE(lit["ver"].cast<valStela>() != nullptr);
 }

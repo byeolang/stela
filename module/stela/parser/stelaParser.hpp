@@ -166,13 +166,15 @@ namespace by {
         //          var:
         /**
          * @brief Creates a value stela node from a primitive value.
-         * @details Strings become @ref strStela; numeric / boolean values become
-         *          @ref valStela The distinction lets @ref stelaWriter re-emit
-         *          strings with the surrounding quotes required by the grammar.
+         * @details One node type per literal form, so the distinction the scanner
+         *          already made survives into the AST: @ref stelaWriter needs it to
+         *          re-emit strings with the quotes the grammar requires, and a visitor
+         *          needs it to tell a number from a boolean without re-parsing.
          */
         template <typename T> stela* onPrimitive(const T& arg) {
             if constexpr(std::is_same_v<T, std::string>) return new strStela(arg);
-            else return new valStela(arg);
+            else if constexpr(std::is_same_v<T, nbool>) return new boolStela(arg);
+            else return new numStela(arg);
         }
 
         verStela* onVer(const std::string& version);

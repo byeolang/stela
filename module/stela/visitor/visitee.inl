@@ -1,9 +1,8 @@
 // visitee list for stelaVisitor.
-//   The base `stela` itself is dispatched through its own hand-written accept /
-//   visit overloads and does not appear here: it is abstract, and the `def` block
-//   it used to stand for is `defStela`. Every type listed here is concrete, so a
-//   node of it can reach `visit()` at runtime. A type that does not override a
-//   given onVisit / onLeave chains up to its `super` overload.
+//   Abstract types do not appear here: `stela` and `valStela` are dispatched through
+//   hand-written overloads in stelaVisitor instead, since no node of theirs exists at
+//   runtime to reach `visit()`. Every type listed here is concrete. A type that does
+//   not override a given onVisit / onLeave chains up to its `super` overload.
 //
 //   When a new leaf-typed stela subclass is added:
 //     - register it with an X(T) line here;
@@ -11,8 +10,9 @@
 //     - put BY(DEF_ME(T), DEF_VISIT()) in its impl.
 X(defStela)
 X(rootStela)
-X(valStela)
 X(arrStela)
+X(numStela)
+X(boolStela)
 X(strStela)
 X(verStela)
 X(nulStela)

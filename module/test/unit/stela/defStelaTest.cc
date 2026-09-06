@@ -82,9 +82,9 @@ def group
     ASSERT_EQ(probe.arrs.size(), (size_t) 1);
     ASSERT_STREQ(probe.arrs[0].c_str(), "deps");
 
-    // the probe leaves valStela alone, so the two elements chain up to the base
-    // overload. that path is the fallback -- before the split it also emitted
-    // `def <name>`, which is exactly what a scalar must never reach.
+    // the probe overrides no value overload, so the two elements chain numStela ->
+    // valStela -> the base. that path is the fallback -- before the split it also
+    // emitted `def <name>`, which is exactly what a scalar must never reach.
     ASSERT_EQ(probe.bases.size(), (size_t) 2);
 }
 
