@@ -13,6 +13,10 @@ namespace by {
      *  The stela language is a lightweight version of byeol language, a special-purpose
      *  language for manifests and options. The version type has three variables:
      *  `major.minor.fix`, and can also express ranges.
+     *
+     *  @remark Exception on a malformed version string
+     *  The string constructors throw if the argument is not `major.minor.fix`. A short
+     *  version is padded instead: `verStela("1.2")` stores `"1.2.0"`.
      */
     class _nout verStela: public valStela {
         BY(CLASS(verStela, valStela), VISIT())
@@ -37,12 +41,10 @@ namespace by {
 
     private:
         static nint _isFromBigger(nint from, nint to);
-        void _parseVerStr(const std::string& verStr);
+        static std::string _normalize(const std::string& verStr);
+        nint _splitVers(nint n) const;
 
     private:
-        nint _maj;
-        nint _min;
-        nint _fix;
         static constexpr nint VER_LEN = 3;
         static constexpr const nchar* DELIMITER = ".";
     };

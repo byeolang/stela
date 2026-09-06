@@ -1,45 +1,31 @@
 #include "stela/ast/verStela.hpp"
 #include "stela/visitor/stelaVisitor.hpp"
+#include <stdexcept>
 
 namespace by {
 
     BY(DEF_ME(verStela, valStela), DEF_VISIT())
 
     me::verStela(int major, int minor, int fix):
-        super(std::to_string(major) + DELIMITER + std::to_string(minor) + DELIMITER + std::to_string(fix)),
-        _maj(major),
-        _min(minor),
-        _fix(fix) {}
+        super(std::to_string(major) + DELIMITER + std::to_string(minor) + DELIMITER + std::to_string(fix)) {}
 
-    me::verStela(const std::string& verStr): super(verStr), _maj(0), _min(0), _fix(0) { _parseVerStr(verStr); }
+    me::verStela(const std::string& verStr): super(_normalize(verStr)) {}
 
-    me::verStela(const nchar* verStr): super(verStr), _maj(0), _min(0), _fix(0) { _parseVerStr(std::string(verStr)); }
+    me::verStela(const nchar* verStr): super(_normalize(verStr ? verStr : "")) {}
 
     nbool me::operator>(const me& rhs) const {
-        nint res = _isFromBigger(_maj, rhs._maj);
+        nint res = _isFromBigger(asMajor(), rhs.asMajor());
         WHEN(res != 0) .ret(res == 1);
 
-        res = _isFromBigger(_min, rhs._min);
+        res = _isFromBigger(asMinor(), rhs.asMinor());
         WHEN(res != 0) .ret(res == 1);
 
-        return _isFromBigger(_fix, rhs._fix) > 0;
+        return _isFromBigger(asFix(), rhs.asFix()) > 0;
     }
 
-    nbool me::operator<(const me& rhs) const {
-        nint res = _isFromBigger(rhs._maj, _maj);
-        WHEN(res != 0) .ret(res == 1);
+    nbool me::operator<(const me& rhs) const { return rhs.operator>(*this); }
 
-        res = _isFromBigger(rhs._min, _min);
-        WHEN(res != 0) .ret(res == 1);
-
-        return _isFromBigger(rhs._fix, _fix) > 0;
-    }
-
-    nbool me::operator==(const me& rhs) const {
-        WHEN(this == &rhs) .ret(true);
-
-        return _maj == rhs._maj && _min == rhs._min && _fix == rhs._fix;
-    }
+    nbool me::operator==(const me& rhs) const { return asStr() == rhs.asStr(); }
 
     nbool me::operator!=(const me& rhs) const { return !operator==(rhs); }
 
@@ -47,11 +33,11 @@ namespace by {
 
     nbool me::operator>=(const me& rhs) const { return !operator<(rhs); }
 
-    nint me::asMajor() const { return _maj; }
+    nint me::asMajor() const { return _splitVers(0); }
 
-    nint me::asMinor() const { return _min; }
+    nint me::asMinor() const { return _splitVers(1); }
 
-    nint me::asFix() const { return _fix; }
+    nint me::asFix() const { return _splitVers(2); }
 
     nint me::_isFromBigger(nint from, nint to) {
         if(from > to) return 1;
@@ -59,15 +45,35 @@ namespace by {
         return -1;
     }
 
-    void me::_parseVerStr(const std::string& verStr) {
+    std::string me::_normalize(const std::string& verStr) {
         std::stringstream ss(verStr);
         std::string token;
+        std::string them[VER_LEN] = {"0", "0", "0"};
 
-        nint* them[] = {&_maj, &_min, &_fix};
-        for(int n = 0; n < VER_LEN; n++) {
-            WHEN(!std::getline(ss, token, DELIMITER[0])) .err("error parsing to %s", verStr).ret();
+        // rejecting here is what lets asMajor() and the operators below skip error
+        // handling entirely: once stored, the string is three numeric segments.
+        nint n = 0;
+        for(; n < VER_LEN && std::getline(ss, token, DELIMITER[0]); n++) {
+            if(token.empty() || token.find_first_not_of("0123456789") != std::string::npos)
+                throw std::invalid_argument("verStela: '" + verStr + "' is not a major.minor.fix version");
 
-            *them[n] = std::stoi(token);
+            them[n] = token;
         }
+
+        // a trailing segment means more than 3 parts; n == 0 means the string was empty.
+        if(n <= 0 || std::getline(ss, token))
+            throw std::invalid_argument("verStela: '" + verStr + "' is not a major.minor.fix version");
+
+        return them[0] + DELIMITER + them[1] + DELIMITER + them[2];
+    }
+
+    nint me::_splitVers(nint n) const {
+        std::stringstream ss(asStr());
+        std::string token;
+
+        for(nint step = 0; step <= n; step++)
+            std::getline(ss, token, DELIMITER[0]);
+
+        return std::stoi(token);
     }
 } // namespace by

@@ -32,6 +32,27 @@ TEST_F(stelaTest, checkVerStela) {
     ASSERT_TRUE(s < s3);
 }
 
+TEST_F(stelaTest, verStelaReadsSegmentsFromItsOwnString) {
+    verStela ver("1.0.8");
+    ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
+    ASSERT_EQ(ver.asMajor(), 1);
+    ASSERT_EQ(ver.asFix(), 8);
+
+    // a short version is padded on the way in, so operator== can stay a plain string
+    // compare without calling "1.2" and "1.2.0" different versions.
+    verStela shorten("1.2");
+    ASSERT_STREQ(shorten.asStr().c_str(), "1.2.0");
+    ASSERT_TRUE(shorten == verStela(1, 2, 0));
+}
+
+TEST_F(stelaTest, verStelaRejectsAMalformedVersion) {
+    // the ctor is the only place a bad string can enter, so the accessors and the
+    // comparison operators below it need no error handling at all.
+    ASSERT_THROW(verStela("1.x.3"), std::invalid_argument);
+    ASSERT_THROW(verStela("1.2.3.4"), std::invalid_argument);
+    ASSERT_THROW(verStela(""), std::invalid_argument);
+}
+
 TEST_F(stelaTest, addOverwritesChildWithSameName) {
     // stela's strong-ref tstr only takes ownership of heap instances, so real
     // usage (mirrored by stelaParser) always adds `new`-allocated children.
