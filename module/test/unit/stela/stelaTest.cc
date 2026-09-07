@@ -19,12 +19,12 @@ TEST_F(stelaTest, checkVerStela) {
     verStela s(1, 2, 3);
     ASSERT_EQ(s.asMajor(), 1);
     ASSERT_EQ(s.asMinor(), 2);
-    ASSERT_EQ(s.asFix(), 3);
+    ASSERT_EQ(s.asPatch(), 3);
 
     verStela s2("1.2.3");
     ASSERT_EQ(s2.asMajor(), 1);
     ASSERT_EQ(s2.asMinor(), 2);
-    ASSERT_EQ(s2.asFix(), 3);
+    ASSERT_EQ(s2.asPatch(), 3);
 
     ASSERT_TRUE(s == s2);
 
@@ -36,7 +36,7 @@ TEST_F(stelaTest, verStelaReadsSegmentsFromItsOwnString) {
     verStela ver("1.0.8");
     ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
     ASSERT_EQ(ver.asMajor(), 1);
-    ASSERT_EQ(ver.asFix(), 8);
+    ASSERT_EQ(ver.asPatch(), 8);
 
     // a short version is padded on the way in, so operator== can stay a plain string
     // compare without calling "1.2" and "1.2.0" different versions.
@@ -49,7 +49,7 @@ TEST_F(stelaTest, verStelaRejectsAMalformedVersion) {
     // the ctor is the only place a bad string can enter, so the accessors and the
     // comparison operators below it need no error handling at all.
     ASSERT_THROW(verStela("1.x.3"), std::invalid_argument);
-    ASSERT_THROW(verStela("1.2.3.4"), std::invalid_argument);
+    ASSERT_THROW(verStela("1.2.3.4.5"), std::invalid_argument);
     ASSERT_THROW(verStela(""), std::invalid_argument);
 }
 

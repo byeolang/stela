@@ -111,7 +111,7 @@ TEST_F(basicParsing, testVerObject) {
     ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
     ASSERT_EQ(ver.asMajor(), 1);
     ASSERT_EQ(ver.asMinor(), 0);
-    ASSERT_EQ(ver.asFix(), 8);
+    ASSERT_EQ(ver.asPatch(), 8);
 
     ASSERT_TRUE(ver >= verStela(1, 0, 7));
     ASSERT_TRUE(ver >= verStela(1, 0, 8));
