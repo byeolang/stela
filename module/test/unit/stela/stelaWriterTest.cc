@@ -69,7 +69,7 @@ stub := 0
     ASSERT_TRUE(api != nullptr);
     ASSERT_EQ(api->asMajor(), 3);
     ASSERT_EQ(api->asMinor(), 2);
-    ASSERT_EQ(api->asFix(), 1);
+    ASSERT_EQ(api->asPatch(), 1);
 
     // floats: std::to_string yields "1.500000"; must re-parse to something close.
     const std::string& ratioStr = reparsed->sub("ratio").asStr();
@@ -97,7 +97,7 @@ TEST_F(stelaWriterTest, containerEditByFreshSet) {
     ASSERT_TRUE(v != nullptr);
     ASSERT_EQ(v->asMajor(), 1);
     ASSERT_EQ(v->asMinor(), 0);
-    ASSERT_EQ(v->asFix(), 0);
+    ASSERT_EQ(v->asPatch(), 0);
 
     // now overwrite an existing scalar with a new scalar value:
     parsed->set("age", (nint) 99);
@@ -167,7 +167,7 @@ ver := 1.2.3
 
     ASSERT_EQ(v->asMajor(), 1);
     ASSERT_EQ(v->asMinor(), 2);
-    ASSERT_EQ(v->asFix(), 3);
+    ASSERT_EQ(v->asPatch(), 3);
 
     std::remove(path.c_str());
 }

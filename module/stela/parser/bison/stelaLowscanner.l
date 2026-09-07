@@ -110,7 +110,7 @@ false {
     return FLTVAL;
 }
 
-([0-9]+.[0-9]+.[0-9]+) {
+([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?) {
     yylval->asStr = new std::string(yytext);
     return VERVAL;
 }

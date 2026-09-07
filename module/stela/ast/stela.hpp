@@ -56,7 +56,7 @@ namespace by {
      *      ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
      *      ASSERT_EQ(ver.asMajor(), 1);
      *      ASSERT_EQ(ver.asMinor(), 0);
-     *      ASSERT_EQ(ver.asFix(), 8);
+     *      ASSERT_EQ(ver.asPatch(), 8);
      *  @endcode
      */
     class stelaVisitor;
