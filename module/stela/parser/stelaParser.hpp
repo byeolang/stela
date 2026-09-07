@@ -166,16 +166,11 @@ namespace by {
         //          var:
         /**
          * @brief Creates a value stela node from a primitive value.
-         * @details One node type per literal form, so the distinction the scanner
-         *          already made survives into the AST: @ref stelaWriter needs it to
-         *          re-emit strings with the quotes the grammar requires, and a visitor
-         *          needs it to tell a number from a boolean without re-parsing.
+         * @details One node type per literal form, so the distinction the scanner already
+         *          made survives into the AST. Numbers are the primary; every other form
+         *          specializes below.
          */
-        template <typename T> stela* onPrimitive(const T& arg) {
-            if constexpr(std::is_same_v<T, std::string>) return new strStela(arg);
-            else if constexpr(std::is_same_v<T, nbool>) return new boolStela(arg);
-            else return new numStela(arg);
-        }
+        template <typename T> stela* onPrimitive(const T& arg) { return new numStela(arg); }
 
         verStela* onVer(const std::string& version);
 
@@ -226,4 +221,8 @@ namespace by {
          *         10^IDX_WIDTH lose their index ordering. */
         static constexpr ncnt IDX_WIDTH = 4;
     };
+
+    template <> inline stela* stelaParser::onPrimitive(const nbool& arg) { return new boolStela(arg); }
+
+    template <> inline stela* stelaParser::onPrimitive(const std::string& arg) { return new strStela(arg); }
 } // namespace by
