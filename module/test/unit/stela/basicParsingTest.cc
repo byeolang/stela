@@ -380,3 +380,52 @@ TEST_F(basicParsing, testComplexNestedScript) {
     stela& log = root->sub("logging");
     ASSERT_TRUE(log["enabled"].asBool());
 }
+
+TEST_F(basicParsing, testCRLFScript) {
+    // no file is involved here, so no text mode translation hides the CR. this is the
+    // shape a manifest fetched straight from the network arrives in.
+    tstr<stela> root = stelaParser().parse("a := 1\r\nb := 2\r\n");
+    ASSERT_TRUE(root);
+
+    ASSERT_EQ(root->sub("a").asInt(), 1);
+    ASSERT_EQ(root->sub("b").asInt(), 2);
+}
+
+TEST_F(basicParsing, testCRLFScriptWithIndent) {
+    const std::string script =
+        "def database\r\n"
+        "    host := \"localhost\"\r\n"
+        "    port := 5432\r\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+
+    stela& db = root->sub("database");
+    ASSERT_TRUE(db.isExist());
+    ASSERT_STREQ(db["host"].asStr().c_str(), "localhost");
+    ASSERT_EQ(db["port"].asInt(), 5432);
+}
+
+TEST_F(basicParsing, testCRLFScriptKeepsColumn) {
+    // dropping the CR must not shift the columns the offside rule counts, so a dedent
+    // still lands where it did with LF.
+    const std::string script =
+        "def outer\r\n"
+        "    def inner\r\n"
+        "        deep := 1\r\n"
+        "    shallow := 2\r\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+
+    stela& outer = root->sub("outer");
+    ASSERT_TRUE(outer.isExist());
+    ASSERT_EQ(outer["inner"]["deep"].asInt(), 1);
+    ASSERT_EQ(outer["shallow"].asInt(), 2);
+}
+
+TEST_F(basicParsing, testBareCRIsStillUnexpected) {
+    // a CR in the middle of a line is not a line ending. it should still be reported
+    // rather than silently swallowed.
+    ASSERT_FALSE(stelaParser().parse("a := \r1\n"));
+}
