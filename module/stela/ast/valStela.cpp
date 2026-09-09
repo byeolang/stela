@@ -20,7 +20,14 @@ namespace by {
 
     nchar me::asChar() const { return _rawVal.empty() ? '\0' : _rawVal[0]; }
 
-    nint me::asInt() const { return std::stoi(_rawVal); }
+    nint me::asInt() const {
+        try {
+            return std::stoi(_rawVal);
+        } catch(const std::exception&) {
+            // every other accessor reads an unconvertible node as its zero.
+            return 0;
+        }
+    }
 
     nbool me::asBool() const {
         std::string low = toLower(_rawVal);

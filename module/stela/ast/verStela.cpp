@@ -95,6 +95,8 @@ namespace by {
         for(nint step = 0; step <= n; step++)
             WHEN(!std::getline(ss, token, DELIMITER[0])) .ret(0);
 
-        return std::stoi(token);
+        try {
+            return std::stoi(token);
+        } catch(const std::exception&) { return 0; }
     }
 } // namespace by

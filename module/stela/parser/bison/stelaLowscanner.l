@@ -12,6 +12,7 @@
 namespace {
     static constexpr int TAB_WIDTH = 4;
     char unescape(const char* seq);
+    int toInt(const char* text, by::stelaParser& ps);
     void append(ZZSTYPE* val, const char* new1);
     void append(ZZSTYPE* val, char new1);
 }
@@ -88,13 +89,13 @@ false {
 }
 
 [[:digit:]]+ {
-    yylval->asInt = std::stoi(yytext, nullptr, 0);
+    yylval->asInt = toInt(yytext, PS);
     BY_DI("scanner: INTVAL=%s", yytext);
     return INTVAL;
 }
 
 0x[0-9a-fA-F]+ {
-    yylval->asInt = std::stoi(yytext, nullptr, 0);
+    yylval->asInt = toInt(yytext, PS);
     BY_DI("scanner: INTVAL=%s(%d)", yytext, yylval->asInt);
     return INTVAL;
 }
@@ -212,6 +213,16 @@ namespace {
         (*val->asStr) += new1;
     }
 
+    int toInt(const char* text, by::stelaParser& ps) {
+        try {
+            return std::stoi(text, nullptr, 0);
+        } catch(const std::exception&) {
+            // a literal wider than nint. report it rather than let it escape parse().
+            ps.report("int literal out of range");
+            return 0;
+        }
+    }
+
     char unescape(const char* seq) {
         if(!seq) return '\0';
 
@@ -228,7 +239,9 @@ namespace {
             // decimal:
             case '1': case '2': case '3': case '4': case '5':
             case '6': case '7': case '8': case '9': case '0':
-                return std::stoi(seq, nullptr, 0);
+                try {
+                    return std::stoi(seq, nullptr, 0);
+                } catch(const std::exception&) { return '\0'; }
 
             default:
                 return seq[0];

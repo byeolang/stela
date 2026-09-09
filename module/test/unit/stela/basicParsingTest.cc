@@ -429,3 +429,30 @@ TEST_F(basicParsing, testBareCRIsStillUnexpected) {
     // rather than silently swallowed.
     ASSERT_FALSE(stelaParser().parse("a := \r1\n"));
 }
+
+TEST_F(basicParsing, testIntLiteralOutOfRangeIsAnError) {
+    // std::stoi threw on a literal wider than nint and the exception escaped parse(),
+    // taking the process with it. it should be an ordinary parse error now.
+    ASSERT_FALSE(stelaParser().parse("size := 3000000000\n"));
+}
+
+TEST_F(basicParsing, testHexLiteralOutOfRangeIsAnError) { ASSERT_FALSE(stelaParser().parse("mask := 0xFFFFFFFFFF\n")); }
+
+TEST_F(basicParsing, testIntLiteralAtTheBoundaryStillParses) {
+    tstr<stela> root = stelaParser().parse("size := 2147483647\n");
+    ASSERT_TRUE(root);
+    ASSERT_EQ(root->sub("size").asInt(), 2147483647);
+}
+
+TEST_F(basicParsing, testOutOfRangeValueReadsAsZero) {
+    // a node built directly, bypassing the scanner: asInt() must not throw either.
+    numStela big("3000000000", "big");
+    ASSERT_EQ(big.asInt(), 0);
+    ASSERT_FALSE(big.asBool());
+    ASSERT_STREQ(big.asStr().c_str(), "3000000000");
+}
+
+TEST_F(basicParsing, testNonNumericValueReadsAsZero) {
+    numStela word("hello", "word");
+    ASSERT_EQ(word.asInt(), 0);
+}
