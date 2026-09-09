@@ -199,6 +199,7 @@ namespace by {
 
     private:
         void _prepare();
+        std::string _removeCRLF(const std::string& codes);
         void* _scanString(const nchar* src, void* scanner);
         nint _onTokenEndOfInlineBlock(nint tok);
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);

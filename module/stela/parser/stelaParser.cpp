@@ -196,13 +196,30 @@ namespace by {
         return parseFromFile(std::string(path));
     }
 
+    std::string me::_removeCRLF(const std::string& codes) {
+        size_t from = 0, at = codes.find("\r\n");
+        WHEN(at == std::string::npos) .ret(codes);
+
+        std::string ret;
+        ret.reserve(codes.size());
+        for(; at != std::string::npos; at = codes.find("\r\n", from)) {
+            ret.append(codes, from, at - from);
+            from = at + 1; // keeps the LF.
+        }
+        ret.append(codes, from, std::string::npos);
+
+        return ret;
+    }
+
     tstr<stela> me::parse(const std::string& codes) {
         _prepare();
+
+        const std::string stripped = _removeCRLF(codes);
 
         zzscan_t scanner;
         zzlex_init_extra(this, &scanner);
 
-        yy_buffer_state& bufState = (YY_BUFFER_STATE) _scanString(codes.c_str(), scanner) OR.ret(nullptr);
+        yy_buffer_state& bufState = (YY_BUFFER_STATE) _scanString(stripped.c_str(), scanner) OR.ret(nullptr);
 
         // fix Flex Bug here:
         //  when zz_scan_string get called, it returns bufState after malloc it.
