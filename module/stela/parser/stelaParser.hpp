@@ -204,7 +204,6 @@ namespace by {
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);
         tstr<stela> _finalize();
         void _addElem(stela& arr, stela& elem);
-        static std::string _idxName(ncnt n);
 
     private:
         stelaTokenScan* _mode;
@@ -215,11 +214,6 @@ namespace by {
         std::vector<nint> _states;
         stelaSmartDedent _dedent;
         std::vector<std::string> _errs;
-
-    private:
-        /** @brief Digit count of an @ref arrStela element name. Arrays longer than
-         *         10^IDX_WIDTH lose their index ordering. */
-        static constexpr ncnt IDX_WIDTH = 4;
     };
 
     template <> inline stela* stelaParser::onPrimitive(const nbool& arg) { return new boolStela(arg); }

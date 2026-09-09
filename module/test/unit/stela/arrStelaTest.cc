@@ -39,8 +39,8 @@ TEST_F(arrStelaTest, duplicatedElementsAreKept) {
 }
 
 TEST_F(arrStelaTest, indexOrderSurvivesPastTen) {
-    // the regression the zero-padded names exist for: with bare "2" and "10" the
-    // child map would order "10" first and sub(2) would return the wrong element.
+    // sorted by name, "10" lands ahead of "2" and sub(2) returns the wrong element.
+    // insertion order is what keeps this right.
     std::stringstream ss;
     ss << "big := {";
     for(nint n = 0; n < 12; ++n) {
@@ -67,9 +67,7 @@ TEST_F(arrStelaTest, iteratorWalksInIndexOrder) {
         stela& elem = e.get() OR_CONTINUE;
         ASSERT_EQ(elem.asInt(), expect);
 
-        char key[16];
-        snprintf(key, sizeof(key), "%04d", (int) expect);
-        ASSERT_STREQ(elem.getName().c_str(), key);
+        ASSERT_STREQ(elem.getName().c_str(), std::to_string(expect).c_str());
         expect++;
     }
     ASSERT_EQ(expect, 12);

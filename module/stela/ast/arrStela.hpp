@@ -20,9 +20,8 @@ namespace by {
      *  @endcode
      *
      *  @remark Element order
-     *  The index is zero-padded so that the child map's lexicographic key order is
-     *  also numeric order; bare "10" would sort ahead of "2". The padding width caps
-     *  how many elements keep their order — see stelaParser::IDX_WIDTH.
+     *  Elements are named "0", "1", "2", ... and come back in that order because
+     *  @ref stela keeps its children in insertion order.
      */
     class _nout arrStela: public stela {
         BY(CLASS(arrStela, stela), VISIT())

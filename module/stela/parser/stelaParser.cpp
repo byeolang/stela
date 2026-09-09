@@ -149,16 +149,8 @@ namespace by {
     void me::_addElem(stela& arr, stela& elem) {
         // elements arrive nameless: add() would key them all on "" and each would
         // overwrite the last.
-        elem.setName(_idxName(arr.len()));
+        elem.setName(std::to_string(arr.len()));
         arr.add(elem);
-    }
-
-    std::string me::_idxName(ncnt n) {
-        // zero-padded so the child map's lexicographic key order matches numeric
-        // order: bare "10" would sort ahead of "2" and break sub(nidx).
-        std::string it = std::to_string(n);
-        if(it.size() >= IDX_WIDTH) return it;
-        return std::string(IDX_WIDTH - it.size(), '0') + it;
     }
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {
