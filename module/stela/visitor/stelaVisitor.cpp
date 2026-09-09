@@ -47,7 +47,7 @@ namespace by {
         ncnt len = it.len();
         nidx idx = 0;
         for(auto e = it.begin(); e != it.end(); ++e, ++idx) {
-            stela& child = e->second.get() OR_CONTINUE;
+            stela& child = e->get() OR_CONTINUE;
             child.accept(stelaVisitInfo(child.getName(), &it, idx, len, i.depth + 1), *this);
         }
     }

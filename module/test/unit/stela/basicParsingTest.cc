@@ -156,10 +156,10 @@ TEST_F(basicParsing, testIteration) {
     stela& person = file->sub("person");
     ASSERT_EQ(expects.size(), person.len());
 
-    for(const auto& pair: person) {
-        const string& name = pair.first;
+    for(const auto& e: person) {
+        const string& name = e->getName();
 
-        ASSERT_STREQ(pair.second->asStr().c_str(), expects[name].c_str());
+        ASSERT_STREQ(e->asStr().c_str(), expects[name].c_str());
     }
 }
 

@@ -65,8 +65,10 @@ namespace by {
     class _nout stela: public instance {
         BY(ADT(stela, instance))
 
-        typedef std::map<std::string, tstr<me>> myMap;
-        typedef myMap::iterator iterator;
+        // children keep the order they were added in. an alphabetical map would reorder
+        // a manifest on every write, and would put v0_1_10_0 ahead of v0_1_4_1.
+        typedef smap<std::string, tstr<me>, std::map> myMap;
+        typedef typename myMap::iterator iterator;
 
     public:
         /**
