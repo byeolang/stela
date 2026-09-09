@@ -64,25 +64,27 @@ TEST_F(arrStelaTest, iteratorWalksInIndexOrder) {
 
     nint expect = 0;
     for(auto& e: root->sub("big")) {
-        stela& elem = e.second.get() OR_CONTINUE;
+        stela& elem = e.get() OR_CONTINUE;
         ASSERT_EQ(elem.asInt(), expect);
 
         char key[16];
         snprintf(key, sizeof(key), "%04d", (int) expect);
-        ASSERT_STREQ(e.first.c_str(), key);
+        ASSERT_STREQ(elem.getName().c_str(), key);
         expect++;
     }
     ASSERT_EQ(expect, 12);
 }
 
-TEST_F(arrStelaTest, namedChildrenKeepLexicographicOrder) {
+TEST_F(arrStelaTest, namedChildrenKeepInsertionOrder) {
+    // these used to come back alphabetically, which reordered a file on every write and
+    // made "the last entry is the newest" false.
     tstr<stela> root = stelaParser().parse("zebra := 1\napple := 2\nmango := 3\n");
     ASSERT_TRUE(root);
 
     std::string names;
     for(auto& e: *root)
-        names += e.first + " ";
-    ASSERT_STREQ(names.c_str(), "apple mango zebra ");
+        names += e->getName() + " ";
+    ASSERT_STREQ(names.c_str(), "zebra apple mango ");
 }
 
 TEST_F(arrStelaTest, mixedTypesAndStrings) {

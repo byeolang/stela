@@ -24,9 +24,9 @@ namespace by {
 
     me& me::sub(const std::string& name) {
         auto found = _subs.find(name);
-        WHEN(found == _subs.end()) .ret(inner);
+        WHEN(found.isEnd()) .ret(inner);
 
-        me& ret = found->second.get() OR.ret(inner);
+        me& ret = found->get() OR.ret(inner);
         return ret;
     }
 
@@ -37,12 +37,12 @@ namespace by {
 
     me& me::sub(nidx n) {
         if(n < 0 || n >= _subs.size()) return inner;
-        return *std::next(begin(), n)->second.get();
+        return *(begin() + n)->get();
     }
 
-    nbool me::has(const std::string& name) const { return _subs.find(name) != _subs.end(); }
+    nbool me::has(const std::string& name) const { return !_subs.find(name).isEnd(); }
 
-    void me::add(const stela& new1) { _subs.insert_or_assign(new1.getName(), tstr<me>(new1)); }
+    void me::add(const stela& new1) { _subs.insert(new1.getName(), tstr<me>(new1)); }
 
     void me::add(std::initializer_list<stela*> subs) {
         for(auto e: subs)
@@ -55,7 +55,7 @@ namespace by {
 
     void me::del(const nchar* name) {
         WHEN_NUL(name).ret();
-        _subs.erase(name);
+        _subs.erase(std::string(name));
     }
 
     const std::string& me::getName() const { return _name; }
