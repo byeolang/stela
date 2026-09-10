@@ -214,11 +214,10 @@ namespace by {
     tstr<stela> me::parse(const std::string& codes) {
         _prepare();
 
-        const std::string stripped = _removeCRLF(codes);
-
         zzscan_t scanner;
         zzlex_init_extra(this, &scanner);
 
+        const std::string stripped = _removeCRLF(codes);
         yy_buffer_state& bufState = (YY_BUFFER_STATE) _scanString(stripped.c_str(), scanner) OR.ret(nullptr);
 
         // fix Flex Bug here:
