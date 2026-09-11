@@ -12,7 +12,8 @@ namespace by {
 
     me::stela(std::initializer_list<me*> subs, const std::string& name): _name(name) { add(subs); }
 
-    me::stela(const me& rhs, const std::string& name): super(), _subs(rhs._subs), _name(name) {}
+    me::stela(const me& rhs, const std::string& name):
+        super(), _subs(rhs._subs), _name(name), _prefix(rhs._prefix), _postfix(rhs._postfix) {}
 
     me::stela(const std::string& name): _name(name) {}
 
@@ -56,6 +57,24 @@ namespace by {
     void me::del(const nchar* name) {
         WHEN_NUL(name).ret();
         _subs.erase(std::string(name));
+    }
+
+    const std::string& me::getPrefix() const { return _prefix; }
+
+    void me::setPrefix(const std::string& newPrefix) { _prefix = newPrefix; }
+
+    void me::setPrefix(const nchar* newPrefix) {
+        WHEN_NUL(newPrefix).ret();
+        _prefix = newPrefix;
+    }
+
+    const std::string& me::getPostfix() const { return _postfix; }
+
+    void me::setPostfix(const std::string& newPostfix) { _postfix = newPostfix; }
+
+    void me::setPostfix(const nchar* newPostfix) {
+        WHEN_NUL(newPostfix).ret();
+        _postfix = newPostfix;
     }
 
     const std::string& me::getName() const { return _name; }

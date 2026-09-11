@@ -24,6 +24,14 @@ namespace by {
             case SCAN_MODE_END: tok = 0; // == zzterminate();
         }
 
+        if(_isLineContent(tok)) {
+            // a comment with more of the same line after it is the prefix of what follows rather
+            // than the postfix of what came before. before `,` or `}` it is the postfix of the element those
+            // close instead, and _addElem() takes it.
+            if(_isTokenInLine && tok != ',' && tok != '}') _prefix += _postfix, _postfix.clear();
+            _isTokenInLine = true;
+        }
+
         return tok;
     }
 
@@ -57,16 +65,94 @@ namespace by {
     nint me::onTokenNewLine(nint tok) {
         BY_DI("tokenEvent: onNewLine: _isIgnoreWhitespace=%s, _indents.size()=%d", _isIgnoreWhitespace,
             _indents.size());
+        if(_isDefHeader && !_defComments.empty()) {
+            _defComments.back().second = _postfix;
+            _postfix.clear();
+            _isDefHeader = false;
+        }
+        // a swallowed newline does not end the statement, so the comment before it is the prefix of
+        // what follows.
+        if(_isIgnoreWhitespace) _prefix += _postfix, _postfix.clear();
+        _isTokenInLine = false;
+
         if(!_isIgnoreWhitespace && _indents.size() >= 1) _dispatcher.add(SCAN_MODE_INDENT);
         _dedent.rel();
         return tok;
     }
 
+    nbool me::_isLineContent(nint tok) {
+        switch(tok) {
+            case SCAN_AGAIN:
+            case SCAN_EXIT:
+            case SCAN_MODE_NORMAL:
+            case SCAN_MODE_INDENT:
+            case SCAN_MODE_INDENT_IGNORE:
+            case SCAN_MODE_END:
+            case NEWLINE:
+            case INDENT:
+            case DEDENT:
+            case ENDOFFILE: return false;
+        }
+        return tok > 0;
+    }
+
+    void me::onComment(const nchar* text) {
+        WHEN_NUL(text).ret();
+
+        std::string& com = _isTokenInLine ? _postfix : _prefix;
+        for(ncnt skip = 0; *text; ++text) {
+            if(skip && *text == ' ') {
+                --skip;
+                continue;
+            }
+            skip = *text == '\n' ? _commentCol : 0;
+            com += *text;
+        }
+    }
+
+    void me::onCommentBegin(const nchar* text, ncnt col) {
+        if(!_isTokenInLine && !_prefix.empty()) _prefix += "\n";
+        // a postfix is written back as is, so only a prefix drops the absolute indentation.
+        _commentCol = _isTokenInLine ? 0 : col;
+        onComment(text);
+    }
+
+    nint me::onTokenDef(nint tok) {
+        _defComments.emplace_back(_prefix, "");
+        _prefix.clear();
+        _isDefHeader = true;
+        return tok;
+    }
+
+    nint me::onTokenDefAssign(nint tok) {
+        _assignComments.push_back(_prefix);
+        _prefix.clear();
+        return tok;
+    }
+
+    stela* me::_bornVal(stela* val) {
+        WHEN_NUL(val).ret(val);
+
+        val->setPrefix(_prefix);
+        _prefix.clear();
+        return val;
+    }
+
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
     stela* me::onDefAssign(const std::string& name, stela* rhs) {
+        // popped before the null check, or a bad rhs would shift every later statement's comment.
+        std::string prefix = std::move(_assignComments.back());
+        _assignComments.pop_back();
         WHEN_NUL(rhs).err("rhs is nul").ret(nullptr);
+
         rhs->setName(name);
+        // a comment between `:=` and the value already went to the value.
+        const std::string& valPrefix = rhs->getPrefix();
+        if(!valPrefix.empty()) prefix += (prefix.empty() ? "" : "\n") + valPrefix;
+        rhs->setPrefix(prefix);
+        rhs->setPostfix(_postfix);
+        _postfix.clear();
         return rhs;
     }
 
@@ -126,7 +212,7 @@ namespace by {
         return s;
     }
 
-    verStela* me::onVer(const std::string& version) { return new verStela(version); }
+    verStela* me::onVer(const std::string& version) { return _bornVal(new verStela(version))->cast<verStela>(); }
 
     stela* me::onInt(const std::string& repr) {
         nint val = 0;
@@ -143,7 +229,7 @@ namespace by {
 
     stela* me::_bornNum(numStela* num, const std::string& repr) {
         num->_repr = repr;
-        return num;
+        return _bornVal(num);
     }
 
     stela* me::onDefProp(const std::string& name, stela& rhs) {
@@ -151,7 +237,7 @@ namespace by {
         return &rhs;
     }
 
-    stela* me::onDefArray() { return new arrStela(); }
+    stela* me::onDefArray() { return _bornVal(new arrStela()); }
 
     stela* me::onDefArray(stela& elem) {
         arrStela* ret = new arrStela();
@@ -168,11 +254,18 @@ namespace by {
         // elements arrive nameless: add() would key them all on "" and each would
         // overwrite the last.
         elem.setName(std::to_string(arr.len()));
+        elem.setPostfix(_postfix);
+        _postfix.clear();
         arr.add(elem);
     }
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {
         blk.setName(name);
+        if(!_defComments.empty()) {
+            blk.setPrefix(_defComments.back().first);
+            blk.setPostfix(_defComments.back().second);
+            _defComments.pop_back();
+        }
         return &blk;
     }
 
@@ -184,13 +277,16 @@ namespace by {
         // adopts its children before the rebind drops it.
         _root.bind(subpod);
         rootStela* ret = new rootStela(*subpod, "root");
+        // whatever is still pending comes after every node, so it closes the file.
+        ret->setPostfix(_prefix);
+        _prefix.clear();
         _root.bind(ret);
         return ret;
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }
 
-    me::stelaParser(): _mode(nullptr), _isIgnoreWhitespace(false) { rel(); }
+    me::stelaParser(): _mode(nullptr), _isIgnoreWhitespace(false), _isTokenInLine(false), _isDefHeader(false) { rel(); }
 
     stelaTokenDispatcher& me::getDispatcher() { return _dispatcher; }
 
@@ -279,6 +375,13 @@ namespace by {
         _isIgnoreWhitespace = false;
         _dispatcher.rel();
         _indents.clear();
+        _prefix.clear();
+        _postfix.clear();
+        _isTokenInLine = false;
+        _isDefHeader = false;
+        _defComments.clear();
+        _assignComments.clear();
+        _commentCol = 0;
     }
 
     int me::pushState(int newState) {

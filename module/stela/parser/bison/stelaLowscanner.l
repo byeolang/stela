@@ -55,7 +55,7 @@ typedef ZZLTYPE YYLTYPE;
 \} { return '}'; }
 [,] { return PS.onTokenComma(yytext[0]); }
 [\:] { return PS.onTokenColon(yytext[0]); }
-":=" { return DEFASSIGN; }
+":=" { return PS.onTokenDefAssign(DEFASSIGN); }
 
 [ ]+ ;
 
@@ -69,7 +69,7 @@ typedef ZZLTYPE YYLTYPE;
     return PS.onTokenNewLine(NEWLINE);
 }
 
-def { return DEF; }
+def { return PS.onTokenDef(DEF); }
 int { return _INT_; }
 str { return _STR_; }
 bool { return _BOOL_; }
@@ -149,19 +149,25 @@ false {
 
 # {
     BEGIN(PS.pushState(stateComment));
+    PS.onCommentBegin(yytext, yylloc->start.col);
 }
 <stateComment>\n {
     BEGIN(PS.popState());
     yylloc->colcnt = yylloc->start.col = yylloc->end.col = 0;
     return PS.onTokenNewLine(NEWLINE);
 }
-<stateComment>. {}
+<stateComment>[^\n]+ { PS.onComment(yytext); }
 
 ## {
     BEGIN(PS.pushState(stateBlockComment));
+    PS.onCommentBegin(yytext, yylloc->start.col);
 }
-<stateBlockComment>## { BEGIN(PS.popState()); }
-<stateBlockComment>. {}
+<stateBlockComment>## {
+    BEGIN(PS.popState());
+    PS.onComment(yytext);
+}
+<stateBlockComment>[^#]+ { PS.onComment(yytext); }
+<stateBlockComment># { PS.onComment(yytext); }
 
 . {
     BY_DI(". yytext=%s", yytext);

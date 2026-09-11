@@ -123,6 +123,22 @@ namespace by {
         void del(const std::string* it) BY_SIDE_FUNC(del);
         void del(const nchar* name);
 
+        /**
+         * @brief The comment lines sitting above this node, `#` markers included.
+         * @details Stored without indentation: @ref stelaWriter re-indents them to this
+         *  node's depth, so a node keeps its comment when it moves. Empty for a node that
+         *  was built in code rather than parsed.
+         */
+        const std::string& getPrefix() const;
+        void setPrefix(const std::string& newPrefix);
+        void setPrefix(const nchar* newPrefix);
+        /**
+         * @brief The comment after this node on the same line, `#` marker included.
+         */
+        const std::string& getPostfix() const;
+        void setPostfix(const std::string& newPostfix);
+        void setPostfix(const nchar* newPostfix);
+
         const std::string& getName() const;
         void setName(const std::string& newName);
         void setName(const std::string* it) BY_SIDE_FUNC(setName);
@@ -174,5 +190,7 @@ namespace by {
     private:
         myMap _subs;
         std::string _name;
+        std::string _prefix;
+        std::string _postfix;
     };
 } // namespace by
