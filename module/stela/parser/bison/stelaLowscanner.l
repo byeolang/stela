@@ -12,7 +12,6 @@
 namespace {
     static constexpr int TAB_WIDTH = 4;
     char unescape(const char* seq);
-    int toInt(const char* text, by::stelaParser& ps);
     void append(ZZSTYPE* val, const char* new1);
     void append(ZZSTYPE* val, char new1);
 }
@@ -88,15 +87,11 @@ false {
     return BOOLVAL;
 }
 
-[[:digit:]]+ {
-    yylval->asInt = toInt(yytext, PS);
-    BY_DI("scanner: INTVAL=%s", yytext);
-    return INTVAL;
-}
-
+[[:digit:]]+ |
 0x[0-9a-fA-F]+ {
-    yylval->asInt = toInt(yytext, PS);
-    BY_DI("scanner: INTVAL=%s(%d)", yytext, yylval->asInt);
+    // the spelling, not the value: the parser converts, and the node keeps `0xFF` as written.
+    yylval->asStr = new std::string(yytext);
+    BY_DI("scanner: INTVAL=%s", yytext);
     return INTVAL;
 }
 
@@ -107,7 +102,7 @@ false {
 }
 
 ([1-9][0-9]*.[0-9]+|0.[0-9]+) {
-    yylval->asFlt = atof(yytext);
+    yylval->asStr = new std::string(yytext);
     return FLTVAL;
 }
 
@@ -211,16 +206,6 @@ namespace {
         }
 
         (*val->asStr) += new1;
-    }
-
-    int toInt(const char* text, by::stelaParser& ps) {
-        try {
-            return std::stoi(text, nullptr, 0);
-        } catch(const std::exception&) {
-            // a literal wider than nint. report it rather than let it escape parse().
-            ps.report("int literal out of range");
-            return 0;
-        }
     }
 
     char unescape(const char* seq) {

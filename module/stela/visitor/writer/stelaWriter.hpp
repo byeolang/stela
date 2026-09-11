@@ -14,9 +14,9 @@ namespace by {
      *     configured indent
      *   - the original insertion order of children (`std::map` inside @ref stela sorts
      *     them alphabetically)
-     *   - the exact literal spelling of numbers (e.g. `1_000` becomes `1000`)
      *
-     *  What IS preserved: values and structure. Round-trip
+     *  What IS preserved: values, structure, and the spelling of number literals
+     *  (`0xFF` stays `0xFF`). Round-trip
      *  `parse -> edit -> write -> parse` gives the same value tree, and
      *  `write -> parse -> write` produces the same string (canonical fixed point).
      *

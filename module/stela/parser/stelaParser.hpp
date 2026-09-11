@@ -173,6 +173,16 @@ namespace by {
         template <typename T> stela* onPrimitive(const T& arg) { return new numStela(arg); }
 
         verStela* onVer(const std::string& version);
+        /**
+         * @brief Creates a number node from an integer literal, keeping its spelling.
+         * @param repr The literal as written, decimal or `0x` hex. One wider than nint is
+         *        reported as a parse error.
+         */
+        stela* onInt(const std::string& repr);
+        /**
+         * @brief Creates a number node from a float literal, keeping its spelling.
+         */
+        stela* onFlt(const std::string& repr);
 
         stela* onDefProp(const std::string& name, stela& rhs);
         stela* onDefAssign(const std::string& name, stela* rhs);
@@ -205,6 +215,7 @@ namespace by {
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);
         tstr<stela> _finalize();
         void _addElem(stela& arr, stela& elem);
+        stela* _bornNum(numStela* num, const std::string& repr);
 
     private:
         stelaTokenScan* _mode;

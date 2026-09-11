@@ -128,6 +128,24 @@ namespace by {
 
     verStela* me::onVer(const std::string& version) { return new verStela(version); }
 
+    stela* me::onInt(const std::string& repr) {
+        nint val = 0;
+        try {
+            val = std::stoi(repr, nullptr, 0);
+        } catch(const std::exception&) {
+            // a literal wider than nint. report it rather than let it escape parse().
+            report("int literal out of range");
+        }
+        return _bornNum(new numStela(val), repr);
+    }
+
+    stela* me::onFlt(const std::string& repr) { return _bornNum(new numStela((nflt) std::atof(repr.c_str())), repr); }
+
+    stela* me::_bornNum(numStela* num, const std::string& repr) {
+        num->_repr = repr;
+        return num;
+    }
+
     stela* me::onDefProp(const std::string& name, stela& rhs) {
         rhs.setName(name);
         return &rhs;

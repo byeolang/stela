@@ -70,8 +70,6 @@
     ============================================================================================  */
 
 %union {
-    int asInt;
-    float asFlt;
     bool asBool;
     char asChar;
     std::string* asStr;
@@ -108,10 +106,8 @@
 %token NEWLINE INDENT DEDENT ENDOFFILE DOUBLE_DOT TAB DEFASSIGN
 %token OPEN_CLOSE_SQUARE_BRACKET
 //  value-holding-token:
-%token <asInt> INTVAL
-%token <asFlt> FLTVAL
 %token <asBool> BOOLVAL
-%token <asStr> NAME STRVAL VERVAL
+%token <asStr> NAME STRVAL VERVAL INTVAL FLTVAL
 
 // nonterminal:
 //  basic component:
@@ -150,15 +146,19 @@
 %%
 
 // basic component:
-unary: INTVAL { $$ = PS.onPrimitive<nint>($1); }
-       | STRVAL {
+unary: INTVAL {
+        $$ = PS.onInt(*$1);
+        delete $1;
+     } | STRVAL {
         $$ = PS.onPrimitive<std::string>(*$1);
         delete $1;
      } | VERVAL {
         $$ = PS.onVer(*$1);
         delete $1;
-     } | FLTVAL { $$ = PS.onPrimitive<nflt>($1); }
-       | BOOLVAL { $$ = PS.onPrimitive<nbool>($1); }
+     } | FLTVAL {
+        $$ = PS.onFlt(*$1);
+        delete $1;
+     } | BOOLVAL { $$ = PS.onPrimitive<nbool>($1); }
        | NUL {
         // ??
      } | def-array-value { $$ = $1; }

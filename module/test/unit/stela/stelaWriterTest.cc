@@ -171,3 +171,37 @@ ver := 1.2.3
 
     std::remove(path.c_str());
 }
+
+TEST_F(stelaWriterTest, hexKeepsItsSpelling) {
+    const std::string script = "mask := 0xFF\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+    ASSERT_EQ(root->sub("mask").asInt(), 255);
+    ASSERT_EQ(stelaWriter().write(*root), script);
+}
+
+TEST_F(stelaWriterTest, floatKeepsItsSpelling) {
+    // std::to_string() used to write `1.5` back as `1.500000`.
+    const std::string script = "ratio := 1.5\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+    ASSERT_EQ(stelaWriter().write(*root), script);
+}
+
+TEST_F(stelaWriterTest, spellingInsideArray) {
+    const std::string script = "masks := {0x0F, 16, 0.5}\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+    ASSERT_EQ(stelaWriter().write(*root), script);
+}
+
+TEST_F(stelaWriterTest, editedNumberDropsTheOldSpelling) {
+    tstr<stela> root = stelaParser().parse("mask := 0xFF\n");
+    ASSERT_TRUE(root);
+
+    root->add(new numStela(16, "mask"));
+    ASSERT_EQ(stelaWriter().write(*root), "mask := 16\n");
+}

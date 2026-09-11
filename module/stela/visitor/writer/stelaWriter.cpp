@@ -41,7 +41,7 @@ namespace by {
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, valStela& it) {
-        _open(i, it) << it.asStr();
+        _open(i, it) << it.getRepr();
         _close(i);
         return true;
     }

@@ -14,9 +14,11 @@ namespace by {
 
     me::valStela(nflt val, const std::string& name): super(name), _rawVal(std::to_string(val)) {}
 
-    me::valStela(const me& rhs, const std::string& name): super(rhs, name), _rawVal(rhs._rawVal) {}
+    me::valStela(const me& rhs, const std::string& name): super(rhs, name), _rawVal(rhs._rawVal), _repr(rhs._repr) {}
 
     const std::string& me::asStr() const { return _rawVal; }
+
+    const std::string& me::getRepr() const { return _repr.empty() ? _rawVal : _repr; }
 
     nchar me::asChar() const { return _rawVal.empty() ? '\0' : _rawVal[0]; }
 
