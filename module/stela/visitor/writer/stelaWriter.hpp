@@ -7,18 +7,18 @@ namespace by {
 
     /** @ingroup stela
      *  @brief Serializes a stela tree back to stela source text.
-     *  @details Implemented as a @ref stelaVisitor. writes a canonical, lossy form.
-     *  What is NOT preserved:
-     *   - comments in the original file
-     *   - original whitespace, blank lines, and indentation width beyond the writer's
-     *     configured indent
-     *   - the original insertion order of children (`std::map` inside @ref stela sorts
-     *     them alphabetically)
-     *   - the exact literal spelling of numbers (e.g. `1_000` becomes `1000`)
+     *  @details Implemented as a @ref stelaVisitor. writes a canonical form.
      *
-     *  What IS preserved: values and structure. Round-trip
+     *  What IS preserved: values, structure, child order, comments, and the spelling of
+     *  number literals (`0xFF` stays `0xFF`). Round-trip
      *  `parse -> edit -> write -> parse` gives the same value tree, and
      *  `write -> parse -> write` produces the same string (canonical fixed point).
+     *
+     *  What is NOT preserved:
+     *   - original indentation width and any hand alignment: indentation is generated
+     *     from depth, so a node inserted into a hand-written block still lands right
+     *   - blank lines
+     *   - where a comment closing a block sits: it becomes the prefix of the node after the block
      *
      *  @section root_handling Root handling
      *  The writer serializes a compilation unit, so it accepts only a @ref rootStela:
@@ -58,7 +58,10 @@ namespace by {
     private:
         std::string _indent(nint depth);
         std::stringstream& _open(const stelaVisitInfo& i, stela& it);
-        void _close(const stelaVisitInfo& i);
+        void _close(const stelaVisitInfo& i, stela& it);
+        void _writePrefix(const stelaVisitInfo& i, stela& it);
+        void _writePostfix(stela& it);
+        void _writeElemPrefix(stela& it);
 
     private:
         std::stringstream _ss;

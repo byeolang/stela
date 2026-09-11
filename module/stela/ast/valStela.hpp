@@ -20,6 +20,9 @@ namespace by {
      */
     class _nout valStela: public stela {
         BY(ADT(valStela, stela), VISIT())
+        // only the parser sees a spelling. a public setter would let the spelling disagree
+        // with the value, and the writer trusts the spelling.
+        friend class stelaParser;
 
     protected:
         valStela(const std::string& rawVal, const std::string& name = "");
@@ -35,10 +38,19 @@ namespace by {
         nint asInt() const override;
         nbool asBool() const override;
 
+        /**
+         * @brief The literal as it was written in source, e.g. `0xFF` for a value of 255.
+         * @details Falls back to asStr() for a node built in code, which has no spelling
+         *          of its own. Editing a value means adding a new node, so an edit never
+         *          keeps a stale spelling.
+         */
+        const std::string& getRepr() const;
+
     private:
         static std::string toLower(std::string it);
 
     private:
         std::string _rawVal;
+        std::string _repr;
     };
 }
