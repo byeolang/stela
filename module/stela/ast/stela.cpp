@@ -12,7 +12,8 @@ namespace by {
 
     me::stela(std::initializer_list<me*> subs, const std::string& name): _name(name) { add(subs); }
 
-    me::stela(const me& rhs, const std::string& name): super(), _subs(rhs._subs), _name(name) {}
+    me::stela(const me& rhs, const std::string& name):
+        super(), _subs(rhs._subs), _name(name), _comment(rhs._comment) {}
 
     me::stela(const std::string& name): _name(name) {}
 
@@ -56,6 +57,18 @@ namespace by {
     void me::del(const nchar* name) {
         WHEN_NUL(name).ret();
         _subs.erase(std::string(name));
+    }
+
+    const comment& me::getComment() const { return _comment; }
+
+    void me::setComment(const comment& newComment) { _comment = newComment; }
+
+    void me::stamp(const comment& pending) {
+        // a comment between `:=` and the value already went onto the value; keep it below.
+        std::string prefix = pending.prefix;
+        if(!_comment.prefix.empty()) prefix += (prefix.empty() ? "" : "\n") + _comment.prefix;
+        _comment.prefix = prefix;
+        _comment.postfix = pending.postfix;
     }
 
     const std::string& me::getName() const { return _name; }

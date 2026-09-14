@@ -14,6 +14,8 @@ namespace by {
 
     nint me::_onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner) {
         int tok = _mode->onScan(*this, val, loc, scanner);
+        // _isIgnoreWhitespace only affects logic only when whitespaces follows one of ', { . etc.. '
+        // otherwise, parser ignore _isIgnoreWhitespace flag and set back to normal state.
         if(_isIgnoreWhitespace && tok == NEWLINE) return SCAN_AGAIN;
         _isIgnoreWhitespace = false;
 
@@ -23,6 +25,8 @@ namespace by {
             case SCAN_MODE_INDENT_IGNORE: _isIgnoreWhitespace = true; return SCAN_AGAIN;
             case SCAN_MODE_END: tok = 0; // == zzterminate();
         }
+
+        if(_isLineContent(tok)) _state.onCode(tok == ',' || tok == '}');
 
         return tok;
     }
@@ -57,16 +61,60 @@ namespace by {
     nint me::onTokenNewLine(nint tok) {
         BY_DI("tokenEvent: onNewLine: _isIgnoreWhitespace=%s, _indents.size()=%d", _isIgnoreWhitespace,
             _indents.size());
+        _state.onNewLine(_isIgnoreWhitespace);
+
         if(!_isIgnoreWhitespace && _indents.size() >= 1) _dispatcher.add(SCAN_MODE_INDENT);
         _dedent.rel();
         return tok;
     }
 
+    nbool me::_isLineContent(nint tok) {
+        switch(tok) {
+            case SCAN_AGAIN:
+            case SCAN_EXIT:
+            case SCAN_MODE_NORMAL:
+            case SCAN_MODE_INDENT:
+            case SCAN_MODE_INDENT_IGNORE:
+            case SCAN_MODE_END:
+            case NEWLINE:
+            case INDENT:
+            case DEDENT:
+            case ENDOFFILE: return false;
+        }
+        return tok > 0;
+    }
+
+    void me::onComment(const nchar* text) { _state.onComment(text); }
+
+    void me::onCommentBegin(const nchar* text, ncnt col) { _state.onStartComment(text, col); }
+
+    nint me::onTokenDef(nint tok) {
+        _state.onVisitInnerNode();
+        return tok;
+    }
+
+    nint me::onTokenDefAssign(nint tok) {
+        _state.onVisitInnerNode();
+        return tok;
+    }
+
+    stela* me::_bornVal(stela* val) {
+        WHEN_NUL(val).ret(val);
+
+        _state.born(*val);
+        return val;
+    }
+
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
     stela* me::onDefAssign(const std::string& name, stela* rhs) {
+        // left before the null check, or a bad rhs would leave the frame on the stack and
+        // shift every later statement's comment.
+        comment pending = _state.onLeaveInnerNode();
         WHEN_NUL(rhs).err("rhs is nul").ret(nullptr);
+
         rhs->setName(name);
+        rhs->stamp(pending);
         return rhs;
     }
 
@@ -126,14 +174,14 @@ namespace by {
         return s;
     }
 
-    verStela* me::onVer(const std::string& version) { return new verStela(version); }
+    verStela* me::onVer(const std::string& version) { return _bornVal(new verStela(version))->cast<verStela>(); }
 
     stela* me::onDefProp(const std::string& name, stela& rhs) {
         rhs.setName(name);
         return &rhs;
     }
 
-    stela* me::onDefArray() { return new arrStela(); }
+    stela* me::onDefArray() { return _bornVal(new arrStela()); }
 
     stela* me::onDefArray(stela& elem) {
         arrStela* ret = new arrStela();
@@ -150,11 +198,14 @@ namespace by {
         // elements arrive nameless: add() would key them all on "" and each would
         // overwrite the last.
         elem.setName(std::to_string(arr.len()));
+        // stamp, not setComment: an element's prefix was already stamped when it was born.
+        elem.stamp(comment{std::string(), _state.takePostfix()});
         arr.add(elem);
     }
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {
         blk.setName(name);
+        blk.stamp(_state.onLeaveInnerNode());
         return &blk;
     }
 
@@ -166,6 +217,8 @@ namespace by {
         // adopts its children before the rebind drops it.
         _root.bind(subpod);
         rootStela* ret = new rootStela(*subpod, "root");
+        // whatever is still pending comes after every node, so it closes the file.
+        ret->setComment(comment{std::string(), _state.takePending()});
         _root.bind(ret);
         return ret;
     }
@@ -261,6 +314,7 @@ namespace by {
         _isIgnoreWhitespace = false;
         _dispatcher.rel();
         _indents.clear();
+        _state.rel();
     }
 
     int me::pushState(int newState) {

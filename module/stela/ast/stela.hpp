@@ -2,6 +2,7 @@
 #pragma once
 
 #include "stela/common.hpp"
+#include "stela/ast/comment.hpp"
 
 namespace by {
 
@@ -123,6 +124,21 @@ namespace by {
         void del(const std::string* it) BY_SIDE_FUNC(del);
         void del(const nchar* name);
 
+        /**
+         * @brief This node's comments: the block above it (prefix) and the note trailing
+         *        its line (postfix), `#` markers included.
+         * @details The prefix is stored without indentation, so @ref stelaWriter re-indents
+         *  it to the node's depth and a node keeps its comment when it moves. Empty for a
+         *  node built in code rather than parsed.
+         */
+        const comment& getComment() const;
+        void setComment(const comment& newComment);
+        /**
+         * @brief Folds a comment gathered while parsing into this node's own, keeping a
+         *        comment the node already holds.
+         */
+        void stamp(const comment& pending);
+
         const std::string& getName() const;
         void setName(const std::string& newName);
         void setName(const std::string* it) BY_SIDE_FUNC(setName);
@@ -174,5 +190,6 @@ namespace by {
     private:
         myMap _subs;
         std::string _name;
+        comment _comment;
     };
 } // namespace by
