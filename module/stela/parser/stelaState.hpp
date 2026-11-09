@@ -52,8 +52,8 @@ namespace by {
         // reductions:
         /** @brief Enters a construct whose node reduces later, stashing its prefix. */
         void onVisitInnerNode();
-        /** @brief Stamps the pending prefix onto a value node the moment it is born. */
-        void born(stela& val);
+        /** @brief Stamps the pending prefix onto a value node when the parser confirms it. */
+        void flushComment(stela& val);
         /** @brief Leaves the innermost construct, handing back its comment. */
         comment onLeaveInnerNode();
 

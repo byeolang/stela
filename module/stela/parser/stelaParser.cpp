@@ -98,10 +98,8 @@ namespace by {
         return tok;
     }
 
-    stela* me::_bornVal(stela* val) {
-        WHEN_NUL(val).ret(val);
-
-        _state.born(*val);
+    stela& me::_bornVal(stela& val) {
+        _state.flushComment(val);
         return val;
     }
 
@@ -174,14 +172,14 @@ namespace by {
         return s;
     }
 
-    verStela* me::onVer(const std::string& version) { return _bornVal(new verStela(version))->cast<verStela>(); }
+    verStela* me::onVer(const std::string& version) { return _bornVal(new verStela(version)).cast<verStela>(); }
 
     stela* me::onDefProp(const std::string& name, stela& rhs) {
         rhs.setName(name);
         return &rhs;
     }
 
-    stela* me::onDefArray() { return _bornVal(new arrStela()); }
+    stela* me::onDefArray() { return &_bornVal(*new arrStela()); }
 
     stela* me::onDefArray(stela& elem) {
         arrStela* ret = new arrStela();

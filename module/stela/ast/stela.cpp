@@ -43,7 +43,10 @@ namespace by {
 
     nbool me::has(const std::string& name) const { return !_subs.find(name).isEnd(); }
 
-    void me::add(const stela& new1) { _subs.insert(new1.getName(), tstr<me>(new1)); }
+    void me::add(const stela& new1) {
+        _subs.insert(new1.getName(), tstr<me>(new1));
+        new1._parent.bind(this);
+    }
 
     void me::add(std::initializer_list<stela*> subs) {
         for(auto e: subs)
@@ -70,6 +73,10 @@ namespace by {
         _comment.prefix = prefix;
         _comment.postfix = pending.postfix;
     }
+
+    stela* me::getParent() { return _parent.get(); }
+
+    nbool me::isRoot() const { return !_parent; }
 
     const std::string& me::getName() const { return _name; }
 

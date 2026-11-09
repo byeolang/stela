@@ -139,6 +139,14 @@ namespace by {
          */
         void stamp(const comment& pending);
 
+        /**
+         * @brief returns null if this's root stela. otherwise it returns parent element.
+         */
+        stela* getParent();
+        const stela* getParent() const BY_CONST_FUNC(getParent);
+
+        nbool isRoot() const;
+
         const std::string& getName() const;
         void setName(const std::string& newName);
         void setName(const std::string* it) BY_SIDE_FUNC(setName);
@@ -191,5 +199,6 @@ namespace by {
         myMap _subs;
         std::string _name;
         comment _comment;
+        mutable tweak<stela> _parent;
     };
 } // namespace by

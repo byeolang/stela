@@ -194,7 +194,7 @@ namespace by {
          *          made survives into the AST. Numbers are the primary; every other form
          *          specializes below.
          */
-        template <typename T> stela* onPrimitive(const T& arg) { return _bornVal(new numStela(arg)); }
+        template <typename T> stela& onPrimitive(const T& arg) { return _bornVal(*new numStela(arg)); }
 
         verStela* onVer(const std::string& version);
 
@@ -229,7 +229,7 @@ namespace by {
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);
         tstr<stela> _finalize();
         void _addElem(stela& arr, stela& elem);
-        stela* _bornVal(stela* val);
+        stela& _bornVal(stela& val);
         static nbool _isLineContent(nint tok);
 
     private:
@@ -244,7 +244,7 @@ namespace by {
         std::vector<std::string> _errs;
     };
 
-    template <> inline stela* stelaParser::onPrimitive(const nbool& arg) { return _bornVal(new boolStela(arg)); }
+    template <> inline stela& stelaParser::onPrimitive(const nbool& arg) { return _bornVal(*new boolStela(arg)); }
 
-    template <> inline stela* stelaParser::onPrimitive(const std::string& arg) { return _bornVal(new strStela(arg)); }
+    template <> inline stela& stelaParser::onPrimitive(const std::string& arg) { return _bornVal(*new strStela(arg)); }
 } // namespace by
