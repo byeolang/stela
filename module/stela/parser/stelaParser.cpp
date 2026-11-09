@@ -210,15 +210,12 @@ namespace by {
     stela* me::onCompilationUnit(stela* subpod) {
         WHEN_NUL(subpod).err("subpod is null").ret(nullptr);
 
-        // the grammar cannot tell the outermost block from a nested one, so it hands
-        // over an ordinary defStela. binding it first gives it an owner, and the copy
-        // adopts its children before the rebind drops it.
+        // Keep the grammar's block so its children's weak parent bindings stay valid.
         _root.bind(subpod);
-        rootStela* ret = new rootStela(*subpod, "root");
+        subpod->setName("root");
         // whatever is still pending comes after every node, so it closes the file.
-        ret->setComment(comment{std::string(), _state.takePending()});
-        _root.bind(ret);
-        return ret;
+        subpod->setComment(comment{std::string(), _state.takePending()});
+        return subpod;
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }

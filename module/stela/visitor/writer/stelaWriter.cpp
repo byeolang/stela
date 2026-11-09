@@ -10,9 +10,8 @@ namespace by {
         _ss.str("");
         _ss.clear();
 
-        // a bare block never came from source, so writing a `def` line for it would
-        // invent syntax no file ever contained.
-        WHEN(!root.cast<rootStela>()) .ret("");
+        WHEN(!root.isRoot() || !root.cast<defStela>())
+            .err("only a root block is available for code generation").ret("");
 
         work(root);
         if(!root.getComment().postfix.empty()) _ss << root.getComment().postfix << "\n";
@@ -20,23 +19,21 @@ namespace by {
     }
 
     nbool me::writeFile(stela& root, const std::string& path) {
-        WHEN(!root.cast<rootStela>()) .ret(false);
+        WHEN(!root.isRoot() || !root.cast<defStela>())
+            .err("only a root block is available for code generation").ret(false);
 
         std::ofstream fout(path);
         if(!fout.is_open()) {
-            BY_I("stelaWriter::writeFile: cannot open '%s' for writing", path.c_str());
+            BY_I("cannot open '%s' for writing", path.c_str());
             return false;
         }
         fout << write(root);
         return fout.good();
     }
 
-    nbool me::onVisit(const stelaVisitInfo& i, rootStela& it) {
-        // no `def` line produced the compilation unit, so none is written back.
-        return true;
-    }
-
     nbool me::onVisit(const stelaVisitInfo& i, defStela& it) {
+        WHEN(it.isRoot()) .ret(true); // writer need to omit `def` keyword for root element.
+
         _writePrefix(i, it);
         _ss << _indent(i.depth) << "def " << it.getName();
         _writePostfix(it);
@@ -113,7 +110,7 @@ namespace by {
     }
 
     std::string me::_indent(nint depth) {
-        // write() rejects a non-rootStela, so depth is always >= 1 here and the
+        // write() rejects any stela instance which is not root. so depth is always >= 1 here and the
         // subtraction cannot underflow.
         return std::string((depth - 1) * 4, ' ');
     }

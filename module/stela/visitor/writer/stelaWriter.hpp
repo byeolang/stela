@@ -22,9 +22,9 @@ namespace by {
      *   - where a comment closing a block sits: it becomes the prefix of the node after the block
      *
      *  @section root_handling Root handling
-     *  The writer serializes a compilation unit, so it accepts only a @ref rootStela:
+     *  The writer serializes a compilation unit, so it accepts only a root @ref defStela:
      *  handing write() or writeFile() any other node is rejected (empty string / false).
-     *  The @ref rootStela itself is never emitted as `def <name>` — only its children
+     *  The root @ref defStela itself is never emitted as `def <name>` — only its children
      *  are — matching the shape of stela source, where the top level is implicit.
      *
      *  @section usage Usage
@@ -49,7 +49,6 @@ namespace by {
         nbool writeFile(stela& root, const nchar* path) BY_SIDE_FUNC(path, writeFile(root, std::string(path)), false);
 
     protected:
-        nbool onVisit(const stelaVisitInfo& i, rootStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, defStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;

@@ -1,4 +1,5 @@
 #include "test/byeolTest.hpp"
+#include "clog/enablesZone.hpp"
 #include <vector>
 
 using namespace std;
@@ -46,7 +47,7 @@ def man
     )SRC");
     ASSERT_TRUE(root);
 
-    // the implicit compilation unit is a block too -- a rootStela, which is one.
+    // the implicit compilation unit is a block too -- a defStela, which is one.
     ASSERT_TRUE(root->cast<defStela>() != nullptr);
 
     stela& man = root->sub("man");
@@ -74,8 +75,7 @@ def group
     dispatchProbe probe;
     probe.work(*root);
 
-    // root and group, in visit order -- the probe ignores rootStela, so the
-    // compilation unit chains up to the defStela overload like any other block.
+    // Both the compilation unit and group dispatch to the block overload.
     ASSERT_EQ(probe.defs.size(), (size_t) 2);
     ASSERT_STREQ(probe.defs[1].c_str(), "group");
 
@@ -89,9 +89,8 @@ def group
 }
 
 TEST_F(defStelaTest, handBuiltBlockWritesAsDefSyntax) {
-    // a whole document, so the outermost node is a rootStela: a defStela here would
-    // ask the writer to emit a `def root` line that no source ever contained.
-    rootStela root("root");
+    // The parentless block represents the whole document without a `def root` line.
+    defStela root("root");
     defStela* group = new defStela("group");
     group->add(new strStela("alice", "member"));
     root.add(group);
@@ -102,4 +101,74 @@ TEST_F(defStelaTest, handBuiltBlockWritesAsDefSyntax) {
     ASSERT_TRUE(reparsed);
     ASSERT_TRUE(reparsed->sub("group").cast<defStela>() != nullptr);
     ASSERT_STREQ(reparsed->sub("group")["member"].asStr().c_str(), "alice");
+}
+
+TEST_F(defStelaTest, parserProducesExactlyOneRoot) {
+    tstr<stela> root = stelaParser().parse(R"SRC(
+def outer
+    def inner
+        name := "byeol"
+    )SRC");
+    ASSERT_TRUE(root);
+
+    ASSERT_TRUE(root->cast<defStela>() != nullptr);
+    ASSERT_STREQ(root->getName().c_str(), "root");
+    ASSERT_TRUE(root->isRoot());
+    ASSERT_EQ(root->getParent(), nullptr);
+
+    // nesting does not make more roots: every block below is a plain defStela.
+    stela& outer = root->sub("outer");
+    ASSERT_TRUE(outer.cast<defStela>() != nullptr);
+    ASSERT_FALSE(outer.isRoot());
+    ASSERT_EQ(outer.getParent(), root.get());
+    ASSERT_TRUE(outer["inner"].cast<defStela>() != nullptr);
+    ASSERT_FALSE(outer["inner"].isRoot());
+    ASSERT_EQ(outer["inner"].getParent(), &outer);
+    ASSERT_FALSE(outer["inner"]["name"].isRoot());
+    ASSERT_EQ(outer["inner"]["name"].getParent(), &outer["inner"]);
+}
+
+TEST_F(defStelaTest, parsedRootKeepsItsChildren) {
+    tstr<stela> root = stelaParser().parse(R"SRC(
+name := "byeol"
+port := 8080
+def group
+    member := "alice"
+    )SRC");
+    ASSERT_TRUE(root);
+
+    ASSERT_EQ(root->len(), (ncnt) 3);
+    ASSERT_STREQ((*root)["name"].asStr().c_str(), "byeol");
+    ASSERT_EQ((*root)["port"].asInt(), 8080);
+    ASSERT_STREQ(root->sub("group")["member"].asStr().c_str(), "alice");
+}
+
+TEST_F(defStelaTest, rootIsNotWrittenBackOut) {
+    const string script = "name := \"byeol\"\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+
+    // no `def root` line, and the top-level child stays at column 0.
+    ASSERT_EQ(stelaWriter().write(*root), script);
+}
+
+TEST_F(defStelaTest, aNestedBlockNamedRootIsStillWritten) {
+    // The parent binding determines rootness, regardless of the block's name.
+    defStela unit("root");
+    defStela* inner = new defStela("root");
+    inner->add(new strStela("byeol", "name"));
+    unit.add(inner);
+
+    ASSERT_EQ(stelaWriter().write(unit), "def root\n    name := \"byeol\"\n");
+}
+
+TEST_F(defStelaTest, writerRejectsANonRootStela) {
+    enablesZone logs(false);
+    defStela root("root");
+    defStela* group = new defStela("group");
+    group->add(new strStela("alice", "member"));
+    root.add(group);
+
+    ASSERT_TRUE(stelaWriter().write(*group).empty());
 }

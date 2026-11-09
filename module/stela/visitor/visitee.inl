@@ -9,7 +9,6 @@
 //     - put BY(CLASS(T, ...), VISIT()) in its header;
 //     - put BY(DEF_ME(T), DEF_VISIT()) in its impl.
 X(defStela)
-X(rootStela)
 X(arrStela)
 X(numStela)
 X(boolStela)

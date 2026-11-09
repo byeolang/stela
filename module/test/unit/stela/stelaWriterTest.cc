@@ -1,4 +1,5 @@
 #include "test/byeolTest.hpp"
+#include "clog/enablesZone.hpp"
 #include <cstdio>
 #include <fstream>
 #include <sstream>
@@ -7,6 +8,63 @@ using namespace std;
 using namespace by;
 
 struct stelaWriterTest: public byeolTest {};
+
+TEST_F(stelaWriterTest, parsedNestedBlocksKeepTheirSyntax) {
+    const string script =
+        "def outer\n"
+        "    def inner\n"
+        "        name := \"byeol\"\n";
+
+    tstr<stela> root = stelaParser().parse(script);
+    ASSERT_TRUE(root);
+
+    const string written = stelaWriter().write(*root);
+    ASSERT_EQ(written, script);
+
+    tstr<stela> reparsed = stelaParser().parse(written);
+    ASSERT_TRUE(reparsed);
+    ASSERT_EQ((*reparsed)["outer"]["inner"]["name"].asStr(), "byeol");
+}
+
+TEST_F(stelaWriterTest, rejectsParentlessValuesAndArrays) {
+    enablesZone logs(false);
+    numStela value(1, "count");
+    arrStela array;
+    array.add(new numStela(1, "0"));
+
+    stelaWriter writer;
+    ASSERT_TRUE(writer.write(value).empty());
+    ASSERT_TRUE(writer.write(array).empty());
+}
+
+TEST_F(stelaWriterTest, rejectedFileWritePreservesExistingFile) {
+    enablesZone logs(false);
+    defStela root("root");
+    defStela* group = new defStela("group");
+    root.add(group);
+    numStela value(1, "count");
+    arrStela array;
+
+    const string path = ::testing::TempDir() + "stela_rejected_write_test.stela";
+    const string original = "keep := 42\n";
+    {
+        ofstream file(path);
+        file << original;
+    }
+
+    stelaWriter writer;
+    EXPECT_FALSE(writer.writeFile(*group, path));
+    EXPECT_FALSE(writer.writeFile(value, path));
+    EXPECT_FALSE(writer.writeFile(array, path));
+
+    stringstream contents;
+    {
+        ifstream file(path);
+        contents << file.rdbuf();
+    }
+    std::remove(path.c_str());
+    ASSERT_EQ(contents.str(), original);
+}
 
 // §7.4 (1) canonical fixed point:
 //   parse(write(T)) must succeed, and write(parse(write(T))) must equal write(T).
@@ -80,7 +138,7 @@ stub := 0
 // §7.4 (3) container edit via set/setVersion produces valid stela syntax
 //   (parseable after write).
 TEST_F(stelaWriterTest, containerEditByFreshSet) {
-    rootStela root("root");
+    defStela root("root");
     root.set("name", std::string("byeol"));
     root.set("age", (nint) 10);
     root.setVersion("ver", 1, 0, 0);
