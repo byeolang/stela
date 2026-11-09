@@ -13,7 +13,7 @@ namespace by {
     me::stela(std::initializer_list<me*> subs, const std::string& name): _name(name) { add(subs); }
 
     me::stela(const me& rhs, const std::string& name):
-        super(), _subs(rhs._subs), _name(name), _comment(rhs._comment) {}
+        super(), _subs(rhs._subs), _name(name), _comment(rhs._comment), _parent(rhs._parent) {}
 
     me::stela(const std::string& name): _name(name) {}
 
