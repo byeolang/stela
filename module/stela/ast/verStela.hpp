@@ -52,8 +52,5 @@ namespace by {
         nint _splitVers(nint n) const;
 
     private:
-        static constexpr nint MIN_VER_LEN = 3;
-        static constexpr nint MAX_VER_LEN = 4;
-        static constexpr const nchar* DELIMITER = ".";
     };
 } // namespace by

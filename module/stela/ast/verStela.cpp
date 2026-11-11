@@ -1,6 +1,7 @@
 #include "stela/ast/verStela.hpp"
 #include "stela/visitor/stelaVisitor.hpp"
 #include <stdexcept>
+#include <regex>
 
 namespace by {
 
@@ -18,22 +19,20 @@ namespace by {
     me::verStela(const nchar* verStr): super(_makeValid(verStr ? verStr : "")) {}
 
     nbool me::operator>(const me& rhs) const {
-        nint res = _isFromBigger(asMajor(), rhs.asMajor());
+        nint res = _isBigger(asMajor(), rhs.asMajor());
         WHEN(res != 0) .ret(res == 1);
 
-        res = _isFromBigger(asMinor(), rhs.asMinor());
+        res = _isBigger(asMinor(), rhs.asMinor());
         WHEN(res != 0) .ret(res == 1);
 
-        res = _isFromBigger(asPatch(), rhs.asPatch());
+        res = _isBigger(asPatch(), rhs.asPatch());
         WHEN(res != 0) .ret(res == 1);
 
-        return _isFromBigger(asRev(), rhs.asRev()) > 0;
+        return _isBigger(asRev(), rhs.asRev()) > 0;
     }
 
     nbool me::operator<(const me& rhs) const { return rhs.operator>(*this); }
 
-    // not a string compare: "1.2.3" and "1.2.3.0" are the same version, and only one
-    // of them keeps its fourth segment.
     nbool me::operator==(const me& rhs) const {
         return asMajor() == rhs.asMajor() && asMinor() == rhs.asMinor() && asPatch() == rhs.asPatch() &&
             asRev() == rhs.asRev();
@@ -53,38 +52,32 @@ namespace by {
 
     nint me::asRev() const { return _splitVers(3); }
 
-    nint me::_isFromBigger(nint from, nint to) {
+    nint me::_isBigger(nint from, nint to) {
         if(from > to) return 1;
         if(from == to) return 0;
         return -1;
     }
 
+    namespace {
+        constexpr nchar* DELIMITER = ".";
+        constexpr nchar* EMPTY_VER = ".0";
+        constexpr nint MIN_VER_LEN = 3;
+        constexpr nint MAX_VER_LEN = 4;
+        constexpr nchar* REG_PATT = R"(([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?(?:\.([0-9]+))?)";
+        const std::regex _verDelim(REG_PATT);
+    }
+
     std::string me::_makeValid(const std::string& verStr) {
-        std::stringstream ss(verStr);
-        std::string token;
-        std::string them[MAX_VER_LEN] = {"0", "0", "0", "0"};
+        std::smatch match;
+        if(!std::regex_match(verStr, match, pattern))
+            throw std::invalid_argument("given versing doesn\'t match to expected format 'a.b.c.d'.");
 
-        // rejecting here is what lets asMajor() and the operators below skip error
-        // handling entirely: once stored, the string is numeric segments only.
-        nint n = 0;
-        for(; n < MAX_VER_LEN && std::getline(ss, token, DELIMITER[0]); n++) {
-            if(token.empty() || token.find_first_not_of("0123456789") != std::string::npos)
-                throw std::invalid_argument("verStela: '" + verStr + "' is not a major.minor.patch[.rev] version");
+        std::vector<std::string> parsed(match.begin() + 1, match.end());
 
-            them[n] = token;
-        }
-
-        // a trailing segment means more than 4 parts; n == 0 means the string was empty.
-        if(n <= 0 || std::getline(ss, token))
-            throw std::invalid_argument("verStela: '" + verStr + "' is not a major.minor.patch[.rev] version");
-
-        // a short version pads up to major.minor.patch, but an absent rev stays
-        // absent: three segments is the common case and is written back as three.
-        nint len = n > MIN_VER_LEN ? n : MIN_VER_LEN;
-        std::string ret = them[0];
-        for(nint step = 1; step < len; step++)
-            ret += DELIMITER + them[step];
-
+        // need to fill `.0` to omitted versions:
+        std::string ret = parsed[0];
+        for(auto e = parsed.begin() + 1; e != parsed.end() ;++e)
+            ret += e->empty() ? EMPTY_VER : DELIMITER + *e;
         return ret;
     }
 

@@ -207,15 +207,14 @@ namespace by {
         return &blk;
     }
 
-    stela* me::onCompilationUnit(stela* subpod) {
-        WHEN_NUL(subpod).err("subpod is null").ret(nullptr);
+    stela* me::onCompilationUnit(stela* root) {
+        WHEN_NUL(root).err("subpod is null").ret(nullptr);
 
-        // Keep the grammar's block so its children's weak parent bindings stay valid.
-        _root.bind(subpod);
-        subpod->setName("root");
+        _root.bind(root);
+        root->setName("root");
         // whatever is still pending comes after every node, so it closes the file.
-        subpod->setComment(comment{std::string(), _state.takePending()});
-        return subpod;
+        root->setComment(comment{std::string(), _state.takePending()});
+        return root;
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }

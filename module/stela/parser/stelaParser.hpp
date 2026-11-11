@@ -207,7 +207,7 @@ namespace by {
         stela* onDefArray(stela& elem);
         stela* onDefArray(stela& as, stela& elem);
         //          file:
-        stela* onCompilationUnit(stela* blk);
+        stela* onCompilationUnit(stela* root);
 
         /**
          * @brief Handles a parse error, reporting the message and the symbol where the error occurred.
