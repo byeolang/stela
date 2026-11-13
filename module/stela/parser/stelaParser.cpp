@@ -26,8 +26,6 @@ namespace by {
             case SCAN_MODE_END: tok = 0; // == zzterminate();
         }
 
-        if(_isLineContent(tok)) _state.onCode(tok == ',' || tok == '}');
-
         return tok;
     }
 
@@ -61,7 +59,7 @@ namespace by {
     nint me::onTokenNewLine(nint tok) {
         BY_DI("tokenEvent: onNewLine: _isIgnoreWhitespace=%s, _indents.size()=%d", _isIgnoreWhitespace,
             _indents.size());
-        _state.onNewLine(_isIgnoreWhitespace);
+        _state.onNewLine();
 
         if(!_isIgnoreWhitespace && _indents.size() >= 1) _dispatcher.add(SCAN_MODE_INDENT);
         _dedent.rel();
@@ -86,34 +84,13 @@ namespace by {
 
     void me::onComment(const nchar* text) { _state.onComment(text); }
 
-    void me::onCommentBegin(const nchar* text, ncnt col) { _state.onStartComment(text, col); }
-
-    nint me::onTokenDef(nint tok) {
-        _state.onVisitInnerNode();
-        return tok;
-    }
-
-    nint me::onTokenDefAssign(nint tok) {
-        _state.onVisitInnerNode();
-        return tok;
-    }
-
-    stela& me::_bornVal(stela& val) {
-        _state.flushComment(val);
-        return val;
-    }
-
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
     stela* me::onDefAssign(const std::string& name, stela* rhs) {
-        // left before the null check, or a bad rhs would leave the frame on the stack and
-        // shift every later statement's comment.
-        comment pending = _state.onLeaveInnerNode();
         WHEN_NUL(rhs).err("rhs is nul").ret(nullptr);
 
         rhs->setName(name);
-        rhs->stamp(pending);
-        return rhs;
+        return _state.onLeave(rhs);
     }
 
     nint me::_onTokenEndOfInlineBlock(nint tok) {
@@ -172,39 +149,40 @@ namespace by {
         return s;
     }
 
-    verStela* me::onVer(const std::string& version) { return _bornVal(new verStela(version)).cast<verStela>(); }
+    verStela* me::onVer(const std::string& version) {
+        verStela* new1 = new verStela(version);
+        _state.onLeave(new1);
+        return new1;
+    }
 
     stela* me::onDefProp(const std::string& name, stela& rhs) {
         rhs.setName(name);
         return &rhs;
     }
 
-    stela* me::onDefArray() { return &_bornVal(*new arrStela()); }
+    stela* me::onDefArray() { return _state.onLeave(new arrStela()); }
 
     stela* me::onDefArray(stela& elem) {
         arrStela* ret = new arrStela();
         _addElem(*ret, elem);
-        return ret;
+        return _state.onLeave(ret);
     }
 
     stela* me::onDefArray(stela& as, stela& elem) {
         _addElem(as, elem);
-        return &as;
+        return _state.onLeave(&as);
     }
 
     void me::_addElem(stela& arr, stela& elem) {
         // elements arrive nameless: add() would key them all on "" and each would
         // overwrite the last.
         elem.setName(std::to_string(arr.len()));
-        // stamp, not setComment: an element's prefix was already stamped when it was born.
-        elem.stamp(comment{std::string(), _state.takePostfix()});
         arr.add(elem);
     }
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {
         blk.setName(name);
-        blk.stamp(_state.onLeaveInnerNode());
-        return &blk;
+        return _state.onLeave(&blk);
     }
 
     stela* me::onCompilationUnit(stela* root) {
@@ -212,9 +190,7 @@ namespace by {
 
         _root.bind(root);
         root->setName("root");
-        // whatever is still pending comes after every node, so it closes the file.
-        root->setComment(comment{std::string(), _state.takePending()});
-        return root;
+        return _state.onLeave(root);
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }

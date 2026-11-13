@@ -2,7 +2,6 @@
 #pragma once
 
 #include "stela/common.hpp"
-#include "stela/ast/comment.hpp"
 
 namespace by {
     class stela;
@@ -23,15 +22,13 @@ namespace by {
     class _nout stelaState {
         BY(ME(stelaState))
 
-        enum location {
-            PREFIX,
-            CODE,
-            POSTFIX,
-        };
-
+    public:
         struct state {
-            std::string prefix;
-            std::string postfix;
+            nbool isValid() const;
+            nbool apply();
+
+            std::string comment;
+            tweak<stela> dst;
         };
 
     public:
@@ -39,37 +36,25 @@ namespace by {
 
     public:
         // scanner events:
-        void onStartComment(const nchar* marker, ncnt col);
         void onComment(const nchar* text);
-        /** @brief A content token passed. @p isSeparator marks a `,` or `}`. */
-        void onCode(nbool isSeparator);
-        /** 
-            @brief A line ended. 
+
+        /**
+            @brief A line ended.
             @param ignoreWhitespace this will be true if parser met whitespaces when it's ignoreing whitespace.
          */
-        void onNewLine(nbool ignoreWhitespace);
+        void onNewLine();
 
         // reductions:
         /** @brief Enters a construct whose node reduces later, stashing its prefix. */
-        void onVisitInnerNode();
-        /** @brief Stamps the pending prefix onto a value node when the parser confirms it. */
-        void flushComment(stela& val);
-        /** @brief Leaves the innermost construct, handing back its comment. */
-        comment onLeaveInnerNode();
-
-        std::string takePending();
-        std::string takePostfix();
+        stela& onLeave(stela& toApply);
+        stela* onLeave(stela* it) BY_SIDE_FUNC(it, onLeave(it), it);
 
         void rel();
 
     private:
-        // _stack.front(): the base scope, doubling as the buffer for
-        // comments not yet claimed by an entered construct
-        state& _getCurrentState(); 
+        state& _getLatest();
 
     private:
-        std::vector<state> _states; // open scopes; front() is the base, entering pushes above it
-        location _loc;
-        ncnt _commentCol;
+        std::vector<state> _states;
     };
 } // namespace by

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "stela/common.hpp"
-#include "stela/ast/comment.hpp"
 
 namespace by {
 
@@ -131,19 +130,14 @@ namespace by {
          *  it to the node's depth and a node keeps its comment when it moves. Empty for a
          *  node built in code rather than parsed.
          */
-        const comment& getComment() const;
-        void setComment(const comment& newComment);
-        /**
-         * @brief Folds a comment gathered while parsing into this node's own, keeping a
-         *        comment the node already holds.
-         */
-        void stamp(const comment& pending);
+        const std::string& getComment() const;
+        void setComment(const std::string& new1);
 
         /**
          * @brief returns null if this's root stela. otherwise it returns parent element.
          */
         stela* getParent();
-        const stela* getParent() const BY_CONST_FUNC(getParent);
+        const stela* getParent() const BY_CONST_FUNC(getParent());
 
         nbool isRoot() const;
 
@@ -198,7 +192,7 @@ namespace by {
     private:
         myMap _subs;
         std::string _name;
-        comment _comment;
+        std::string _comment;
         mutable tweak<stela> _parent;
     };
 } // namespace by

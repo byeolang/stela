@@ -47,10 +47,6 @@ namespace by {
         nint asRev() const;
 
     private:
-        static nint _isFromBigger(nint from, nint to);
-        static std::string _makeValid(const std::string& verStr);
         nint _splitVers(nint n) const;
-
-    private:
     };
 } // namespace by

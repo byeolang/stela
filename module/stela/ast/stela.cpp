@@ -62,16 +62,12 @@ namespace by {
         _subs.erase(std::string(name));
     }
 
-    const comment& me::getComment() const { return _comment; }
+    const std::string& me::getComment() const {
+        return _comment;
+    }
 
-    void me::setComment(const comment& newComment) { _comment = newComment; }
-
-    void me::stamp(const comment& pending) {
-        // a comment between `:=` and the value already went onto the value; keep it below.
-        std::string prefix = pending.prefix;
-        if(!_comment.prefix.empty()) prefix += (prefix.empty() ? "" : "\n") + _comment.prefix;
-        _comment.prefix = prefix;
-        _comment.postfix = pending.postfix;
+    void me::setComment(const std::string& new1) {
+        _comment = !new1.empty() && new1[0] != ' ' ? " " + new1 : new1;
     }
 
     stela* me::getParent() { return _parent.get(); }

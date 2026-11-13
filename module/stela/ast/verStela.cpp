@@ -7,12 +7,41 @@ namespace by {
 
     BY(DEF_ME(verStela, valStela), DEF_VISIT())
 
+    namespace {
+        constexpr const nchar* DELIMITER = ".";
+        constexpr const nchar* EMPTY_VER = ".0";
+        constexpr const nchar* REG_PATT = R"(([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?(?:\.([0-9]+))?)";
+        const std::regex _verDelim(REG_PATT);
+    }
+
     me::verStela(nint major, nint minor, nint patch):
         super(std::to_string(major) + DELIMITER + std::to_string(minor) + DELIMITER + std::to_string(patch)) {}
 
     me::verStela(nint major, nint minor, nint patch, nint rev):
         super(std::to_string(major) + DELIMITER + std::to_string(minor) + DELIMITER + std::to_string(patch) +
             DELIMITER + std::to_string(rev)) {}
+
+    namespace {
+        static nint _isBigger(nint from, nint to) {
+            if(from > to) return 1;
+            if(from == to) return 0;
+            return -1;
+        }
+
+        static std::string _makeValid(const std::string& verStr) {
+            std::smatch match;
+            if(!std::regex_match(verStr, match, _verDelim))
+                throw std::invalid_argument("given versing doesn\'t match to expected format 'a.b.c.d'.");
+
+            std::vector<std::string> parsed(match.begin() + 1, match.end());
+
+            // need to fill `.0` to omitted versions:
+            std::string ret = parsed[0];
+            for(auto e = parsed.begin() + 1; e != parsed.end() ;++e)
+                ret += e->empty() ? EMPTY_VER : DELIMITER + *e;
+            return ret;
+        }
+    }
 
     me::verStela(const std::string& verStr): super(_makeValid(verStr)) {}
 
@@ -51,35 +80,6 @@ namespace by {
     nint me::asPatch() const { return _splitVers(2); }
 
     nint me::asRev() const { return _splitVers(3); }
-
-    nint me::_isBigger(nint from, nint to) {
-        if(from > to) return 1;
-        if(from == to) return 0;
-        return -1;
-    }
-
-    namespace {
-        constexpr nchar* DELIMITER = ".";
-        constexpr nchar* EMPTY_VER = ".0";
-        constexpr nint MIN_VER_LEN = 3;
-        constexpr nint MAX_VER_LEN = 4;
-        constexpr nchar* REG_PATT = R"(([0-9]+)(?:\.([0-9]+))?(?:\.([0-9]+))?(?:\.([0-9]+))?)";
-        const std::regex _verDelim(REG_PATT);
-    }
-
-    std::string me::_makeValid(const std::string& verStr) {
-        std::smatch match;
-        if(!std::regex_match(verStr, match, pattern))
-            throw std::invalid_argument("given versing doesn\'t match to expected format 'a.b.c.d'.");
-
-        std::vector<std::string> parsed(match.begin() + 1, match.end());
-
-        // need to fill `.0` to omitted versions:
-        std::string ret = parsed[0];
-        for(auto e = parsed.begin() + 1; e != parsed.end() ;++e)
-            ret += e->empty() ? EMPTY_VER : DELIMITER + *e;
-        return ret;
-    }
 
     nint me::_splitVers(nint n) const {
         std::stringstream ss(asStr());

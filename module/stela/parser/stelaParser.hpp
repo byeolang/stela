@@ -161,24 +161,6 @@ namespace by {
          * @param text The matched text, `#` and `##` markers included.
          */
         void onComment(const nchar* text);
-        /**
-         * @brief Collects the `#` or `##` that opens a comment.
-         * @param col The column it opens at. Later lines of a `##` comment are kept relative
-         *        to it, since the writer re-indents every line to its node's depth.
-         */
-        void onCommentBegin(const nchar* text, ncnt col);
-        /**
-         * @brief Marks the start of a `def` header so its comments can be held aside.
-         * @details The @ref defStela is not created until its whole block has reduced, by
-         *          which time the pending comments belong to its first child instead.
-         */
-        nint onTokenDef(nint tok);
-        /**
-         * @brief Holds aside the comments above an assignment until its value is complete.
-         * @details A value is not always created first: an array is created after its
-         *          elements, and the first one would otherwise take the comment.
-         */
-        nint onTokenDefAssign(nint tok);
 
         //  keyword:
         stela* onDefBlock(stela* stmt);
@@ -194,7 +176,7 @@ namespace by {
          *          made survives into the AST. Numbers are the primary; every other form
          *          specializes below.
          */
-        template <typename T> stela& onPrimitive(const T& arg) { return _bornVal(*new numStela(arg)); }
+        template <typename T> stela* onPrimitive(const T& arg) { return _state.onLeave(new numStela(arg)); }
 
         verStela* onVer(const std::string& version);
 
@@ -229,7 +211,6 @@ namespace by {
         nint _onScan(ZZSTYPE* val, ZZLTYPE* loc, zzscan_t scanner);
         tstr<stela> _finalize();
         void _addElem(stela& arr, stela& elem);
-        stela& _bornVal(stela& val);
         static nbool _isLineContent(nint tok);
 
     private:
@@ -244,7 +225,7 @@ namespace by {
         std::vector<std::string> _errs;
     };
 
-    template <> inline stela& stelaParser::onPrimitive(const nbool& arg) { return _bornVal(*new boolStela(arg)); }
+    template <> inline stela* stelaParser::onPrimitive(const nbool& arg) { return _state.onLeave(new boolStela(arg)); }
 
-    template <> inline stela& stelaParser::onPrimitive(const std::string& arg) { return _bornVal(*new strStela(arg)); }
+    template <> inline stela* stelaParser::onPrimitive(const std::string& arg) { return _state.onLeave(new strStela(arg)); }
 } // namespace by

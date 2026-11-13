@@ -41,7 +41,6 @@ typedef ZZLTYPE YYLTYPE;
 /*  ============================================================================================
     |                                           STATE                                          |
     ============================================================================================  */
-%x stateBlockComment
 %x stateComment
 %x stateString
 
@@ -56,7 +55,7 @@ typedef ZZLTYPE YYLTYPE;
 \} { return '}'; }
 [,] { return PS.onTokenComma(yytext[0]); }
 [\:] { return PS.onTokenColon(yytext[0]); }
-":=" { return PS.onTokenDefAssign(DEFASSIGN); }
+":=" { return DEFASSIGN; }
 
 [ ]+ ;
 
@@ -70,7 +69,7 @@ typedef ZZLTYPE YYLTYPE;
     return PS.onTokenNewLine(NEWLINE);
 }
 
-def { return PS.onTokenDef(DEF); }
+def { return DEF; }
 int { return _INT_; }
 str { return _STR_; }
 bool { return _BOOL_; }
@@ -154,7 +153,6 @@ false {
 
 # {
     BEGIN(PS.pushState(stateComment));
-    PS.onCommentBegin(yytext, yylloc->start.col);
 }
 <stateComment>\n {
     BEGIN(PS.popState());
@@ -162,17 +160,6 @@ false {
     return PS.onTokenNewLine(NEWLINE);
 }
 <stateComment>[^\n]+ { PS.onComment(yytext); }
-
-## {
-    BEGIN(PS.pushState(stateBlockComment));
-    PS.onCommentBegin(yytext, yylloc->start.col);
-}
-<stateBlockComment>## {
-    BEGIN(PS.popState());
-    PS.onComment(yytext);
-}
-<stateBlockComment>[^#]+ { PS.onComment(yytext); }
-<stateBlockComment># { PS.onComment(yytext); }
 
 . {
     BY_DI(". yytext=%s", yytext);

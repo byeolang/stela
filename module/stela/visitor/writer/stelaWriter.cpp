@@ -14,7 +14,7 @@ namespace by {
             .err("only a root block is available for code generation").ret("");
 
         work(root);
-        if(!root.getComment().postfix.empty()) _ss << root.getComment().postfix << "\n";
+        _ss << root.getComment() << "\n";
         return _ss.str();
     }
 
@@ -34,10 +34,7 @@ namespace by {
     nbool me::onVisit(const stelaVisitInfo& i, defStela& it) {
         WHEN(it.isRoot()) .ret(true); // writer need to omit `def` keyword for root element.
 
-        _writePrefix(i, it);
-        _ss << _indent(i.depth) << "def " << it.getName();
-        _writePostfix(it);
-        _ss << "\n";
+        _ss << _indent(i.depth) << "def " << it.getName() << it.getComment() << "\n";
         return true;
     }
 
@@ -79,34 +76,12 @@ namespace by {
     void me::_close(const stelaVisitInfo& i, stela& it) {
         if(i.parent TO(template cast<arrStela>())) {
             // only a `##` comment can be the postfix of an element: a newline is illegal before `,` or `}`.
-            if(!it.getComment().postfix.empty()) _ss << " " << it.getComment().postfix;
+            _ss << " " << it.getComment();
             return;
         }
 
         _writePostfix(it);
         _ss << "\n";
-    }
-
-    void me::_writePrefix(const stelaVisitInfo& i, stela& it) {
-        WHEN(it.getComment().prefix.empty()) .ret();
-
-        // stored without indentation so that a node moving depth takes its comment with it.
-        std::stringstream lines(it.getComment().prefix);
-        for(std::string line; std::getline(lines, line);)
-            _ss << (line.empty() ? "" : _indent(i.depth)) << line << "\n";
-    }
-
-    void me::_writePostfix(stela& it) {
-        WHEN(it.getComment().postfix.empty()) .ret();
-        _ss << "  " << it.getComment().postfix;
-    }
-
-    void me::_writeElemPrefix(stela& it) {
-        WHEN(it.getComment().prefix.empty()) .ret();
-
-        // a newline is only legal right after the comma, and a `#` comment runs to the
-        // end of its line, so the array has to break there.
-        _ss << it.getComment().prefix << (it.getComment().prefix.rfind("##", 0) == 0 ? " " : "\n");
     }
 
     std::string me::_indent(nint depth) {
