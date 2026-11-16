@@ -260,8 +260,8 @@ TEST_F(stelaWriterTest, defKeepsBothComments) {
 
     stela& latest = root->sub("latest");
     ASSERT_TRUE(latest.isExist());
-    ASSERT_STREQ(latest.getComment().prefix.c_str(), "# 0.1.4.1 부터 지원.");
-    ASSERT_STREQ(latest.getComment().postfix.c_str(), "# 채널별 최신");
+    ASSERT_STREQ(latest.getComment().c_str(), "# 0.1.4.1 부터 지원.");
+    ASSERT_STREQ(latest.getComment().c_str(), "# 채널별 최신");
     ASSERT_EQ(stelaWriter().write(*root), script);
 }
 

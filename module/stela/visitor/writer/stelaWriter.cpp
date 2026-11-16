@@ -64,24 +64,21 @@ namespace by {
         // an element has no name of its own: a comma separates it from the previous one.
         if(i.parent TO(template cast<arrStela>())) {
             if(i.index) _ss << ", ";
-            _writeElemPrefix(it);
             return _ss;
         }
 
-        _writePrefix(i, it);
         _ss << _indent(i.depth) << it.getName() << " := ";
         return _ss;
     }
 
     void me::_close(const stelaVisitInfo& i, stela& it) {
-        if(i.parent TO(template cast<arrStela>())) {
+        /*if(i.parent TO(template cast<arrStela>())) {
             // only a `##` comment can be the postfix of an element: a newline is illegal before `,` or `}`.
             _ss << " " << it.getComment();
             return;
-        }
+        }*/
 
-        _writePostfix(it);
-        _ss << "\n";
+        _ss << " " << it.getComment() << "\n";
     }
 
     std::string me::_indent(nint depth) {
