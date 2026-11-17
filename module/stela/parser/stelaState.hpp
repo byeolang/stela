@@ -54,10 +54,15 @@ namespace by {
         // scanner events:
         void onComment(ncnt depth, const nchar* text);
 
+        void onTokenNewLine(ncnt depth) {
+            state& latest = _getLatest(depth);
+            if(latest.getComment().empty()) latest.rel();
+        }
+
         // reductions:
         /** @brief Enters a construct whose node reduces later, stashing its prefix. */
         stela& onLeave(ncnt depth, stela& toApply);
-        stela* onLeave(ncnt depth, stela* it) BY_SIDE_FUNC(it, onLeave(depth, it), it);
+        stela* onLeave(ncnt depth, stela* it) BY_SIDE_FUNC(it, &onLeave(depth, *it), it);
 
         void onTokenIndentOrDedent(ncnt depth);
         void rel();

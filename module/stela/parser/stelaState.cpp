@@ -8,7 +8,7 @@ namespace by {
     nbool me::state::isValid() const { return _dst && !_comment.empty(); }
 
     nbool me::state::apply() {
-        WHEN(!isValid()).ret(false);
+        WHEN(!isValid()) .ret(false);
 
         _dst->setComment(_comment);
         rel();
@@ -22,9 +22,7 @@ namespace by {
 
     me::stelaState() { rel(); }
 
-    void me::rel() {
-        _states.assign(1, state{});
-    }
+    void me::rel() { _states.assign(1, state{}); }
 
     void me::onComment(ncnt depth, const nchar* text) {
         WHEN_NUL(text).ret();
@@ -38,7 +36,7 @@ namespace by {
     }
 
     void me::onTokenIndentOrDedent(ncnt depth) {
-        _states.resize(depth);
+        _states.resize(depth); // root stmt started at depth 1.
     }
 
     me::state& me::_getLatest(ncnt depth) {
