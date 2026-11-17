@@ -23,12 +23,28 @@ namespace by {
         BY(ME(stelaState))
 
     public:
-        struct state {
+        class _nout state {
+
+        public:
             nbool isValid() const;
             nbool apply();
+            void rel();
 
-            std::string comment;
-            tweak<stela> dst;
+            const std::string& getComment() const { return _comment; }
+            void setComment(const std::string& new1) {
+                _comment = new1;
+                apply();
+            }
+
+            const stela* getDst() const { return _dst.get(); }
+            void setDst(const stela& new1) {
+                _dst.bind(new1);
+                apply();
+            }
+
+        private:
+            std::string _comment;
+            tweak<stela> _dst;
         };
 
     public:
@@ -36,23 +52,18 @@ namespace by {
 
     public:
         // scanner events:
-        void onComment(const nchar* text);
-
-        /**
-            @brief A line ended.
-            @param ignoreWhitespace this will be true if parser met whitespaces when it's ignoreing whitespace.
-         */
-        void onNewLine();
+        void onComment(ncnt depth, const nchar* text);
 
         // reductions:
         /** @brief Enters a construct whose node reduces later, stashing its prefix. */
-        stela& onLeave(stela& toApply);
-        stela* onLeave(stela* it) BY_SIDE_FUNC(it, onLeave(it), it);
+        stela& onLeave(ncnt depth, stela& toApply);
+        stela* onLeave(ncnt depth, stela* it) BY_SIDE_FUNC(it, onLeave(depth, it), it);
 
+        void onTokenIndentOrDedent(ncnt depth);
         void rel();
 
     private:
-        state& _getLatest();
+        state& _getLatest(ncnt depth);
 
     private:
         std::vector<state> _states;

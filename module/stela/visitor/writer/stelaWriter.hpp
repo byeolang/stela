@@ -59,9 +59,6 @@ namespace by {
         std::string _indent(nint depth);
         std::stringstream& _open(const stelaVisitInfo& i, stela& it);
         void _close(const stelaVisitInfo& i, stela& it);
-        void _writePrefix(const stelaVisitInfo& i, stela& it);
-        void _writePostfix(stela& it);
-        void _writeElemPrefix(stela& it);
 
     private:
         std::stringstream _ss;

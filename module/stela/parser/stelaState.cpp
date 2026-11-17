@@ -5,13 +5,19 @@ namespace by {
 
     BY_DEF_ME(stelaState)
 
-    nbool me::state::isValid() const { return dst || !comment.empty(); }
+    nbool me::state::isValid() const { return _dst && !_comment.empty(); }
 
     nbool me::state::apply() {
-        WHEN(isValid()).ret(false);
+        WHEN(!isValid()).ret(false);
 
-        dst->setComment(comment);
+        _dst->setComment(_comment);
+        rel();
         return true;
+    }
+
+    void me::state::rel() {
+        _comment = "";
+        _dst.rel();
     }
 
     me::stelaState() { rel(); }
@@ -20,30 +26,23 @@ namespace by {
         _states.assign(1, state{});
     }
 
-    void me::onComment(const nchar* text) {
+    void me::onComment(ncnt depth, const nchar* text) {
         WHEN_NUL(text).ret();
 
-        _getLatest().comment = text;
+        _getLatest(depth).setComment(text);
     }
 
-    void me::onNewLine() {
-        state& latest = _getLatest();
-        WHEN(!latest.isValid()).ret();
-
-        if(!latest.apply())
-            _states.push_back(state{}); // keep this state and add new state for next code line to parse.
-        else
-            _states.pop_back();
-    }
-
-    stela& me::onLeave(stela& it) {
-        _getLatest().dst.bind(it);
+    stela& me::onLeave(ncnt depth, stela& it) {
+        _getLatest(depth).setDst(it);
         return it;
     }
 
-    me::state& me::_getLatest() {
-        if(_states.empty()) _states.push_back(state{});
+    void me::onTokenIndentOrDedent(ncnt depth) {
+        _states.resize(depth);
+    }
 
+    me::state& me::_getLatest(ncnt depth) {
+        onTokenIndentOrDedent(depth);
         return _states.back();
     }
 

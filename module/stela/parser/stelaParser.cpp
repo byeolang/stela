@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cctype>
 
+std::string getStelaTokenName(int tok);
+
 namespace by {
 
     using std::string;
@@ -23,8 +25,15 @@ namespace by {
             case SCAN_MODE_NORMAL: setScan<stelaNormalScan>(); return SCAN_AGAIN;
             case SCAN_MODE_INDENT: setScan<stelaIndentScan>(); return SCAN_AGAIN;
             case SCAN_MODE_INDENT_IGNORE: _isIgnoreWhitespace = true; return SCAN_AGAIN;
-            case SCAN_MODE_END: tok = 0; // == zzterminate();
+            case SCAN_MODE_END: tok = 0; break;
+            case ENDOFFILE: tok = onTokenEndOfFile(); break;
+            case INDENT:
+            case DEDENT: _state.onTokenIndentOrDedent(_indents.size()); break;
         }
+
+        std::string tokName = getStelaTokenName(tok);
+        BY_DI("stela: dispatcher[%d] (token: \"%s\" [%d]) at %d,%d",
+              _dispatcher.len(), tokName, tok, loc->start.row, loc->start.col);
 
         return tok;
     }
@@ -59,7 +68,6 @@ namespace by {
     nint me::onTokenNewLine(nint tok) {
         BY_DI("tokenEvent: onNewLine: _isIgnoreWhitespace=%s, _indents.size()=%d", _isIgnoreWhitespace,
             _indents.size());
-        _state.onNewLine();
 
         if(!_isIgnoreWhitespace && _indents.size() >= 1) _dispatcher.add(SCAN_MODE_INDENT);
         _dedent.rel();
@@ -82,7 +90,7 @@ namespace by {
         return tok > 0;
     }
 
-    void me::onComment(const nchar* text) { _state.onComment(text); }
+    void me::onComment(const nchar* text) { _state.onComment(_dispatcher.len(), text); }
 
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
@@ -90,7 +98,7 @@ namespace by {
         WHEN_NUL(rhs).err("rhs is nul").ret(nullptr);
 
         rhs->setName(name);
-        return _state.onLeave(rhs);
+        return _state.onLeave(_dispatcher.len(), rhs);
     }
 
     nint me::_onTokenEndOfInlineBlock(nint tok) {
@@ -151,7 +159,7 @@ namespace by {
 
     verStela* me::onVer(const std::string& version) {
         verStela* new1 = new verStela(version);
-        _state.onLeave(new1);
+        _state.onLeave(_dispatcher.len(), new1);
         return new1;
     }
 
@@ -160,17 +168,17 @@ namespace by {
         return &rhs;
     }
 
-    stela* me::onDefArray() { return _state.onLeave(new arrStela()); }
+    stela* me::onDefArray() { return _state.onLeave(_dispatcher.len(), new arrStela()); }
 
     stela* me::onDefArray(stela& elem) {
         arrStela* ret = new arrStela();
         _addElem(*ret, elem);
-        return _state.onLeave(ret);
+        return _state.onLeave(_dispatcher.len(), ret);
     }
 
     stela* me::onDefArray(stela& as, stela& elem) {
         _addElem(as, elem);
-        return _state.onLeave(&as);
+        return _state.onLeave(_dispatcher.len(), &as);
     }
 
     void me::_addElem(stela& arr, stela& elem) {
@@ -182,7 +190,7 @@ namespace by {
 
     stela* me::onDefOrigin(const std::string& name, stela& blk) {
         blk.setName(name);
-        return _state.onLeave(&blk);
+        return _state.onLeave(_dispatcher.len(), &blk);
     }
 
     stela* me::onCompilationUnit(stela* root) {
@@ -190,7 +198,7 @@ namespace by {
 
         _root.bind(root);
         root->setName("root");
-        return _state.onLeave(root);
+        return _state.onLeave(_dispatcher.len(), root);
     }
 
     void me::onParseErr(const std::string& msg, const nchar* symbolName) { report(msg + " -> " + symbolName); }

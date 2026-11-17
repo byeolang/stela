@@ -13,11 +13,6 @@ namespace by {
         nint tok;
 
         if(!(isBypass = disp.pop(tok))) tok = zzlexOrigin(val, loc, scanner);
-        if(tok == ENDOFFILE) tok = ps.onTokenEndOfFile();
-
-        std::string tokName = getStelaTokenName(tok);
-        BY_DI("stela: dispatcher[%d]%s(token: \"%s\" [%d]) at %d,%d", disp.len(),
-            isBypass ? ".dispatch" : " lowscanner", tokName, tok, loc->start.row, loc->start.col);
         return tok;
     }
 
