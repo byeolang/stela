@@ -111,7 +111,7 @@
 %token <asInt> INTVAL
 %token <asFlt> FLTVAL
 %token <asBool> BOOLVAL
-%token <asStr> NAME STRVAL VERVAL
+%token <asStr> NAME STRVAL VERVAL LINE_COMMENT /* comment occupying a whole line. */
 
 // nonterminal:
 //  basic component:
@@ -189,6 +189,11 @@ def-expr-inline: def-prop-inline { $$ = $1; }
 def-expr-compound: def-obj { $$ = $1; }
 def-stmt: def-expr-inline NEWLINE { $$ = $1; }
         | def-expr-compound { $$ = $1; }
+        | LINE_COMMENT NEWLINE {
+            $$ = PS.onLineComment(std::string(*$1));
+            delete $1;
+        }
+
 //      access:
 def-stmt-chain: def-expr-inline { $$ = PS.onDefBlock($1); }
               | def-stmt-chain ';' def-expr-inline {

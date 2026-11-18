@@ -16,4 +16,9 @@ namespace by {
 
     nbool me::asBool() const { return false; }
 
+    std::string me::_makeName() {
+        static ncnt count = 0;
+        return "__empty_stela_" + std::to_string(count) + "__";
+    }
+
 } // namespace by

@@ -74,9 +74,9 @@ namespace by {
          * @param subs An initializer list of stela pointers to be added as children.
          * @param name The name of this stela object.
          */
-        stela(std::initializer_list<me*> subs, const std::string& name = "");
-        stela(const me& rhs, const std::string& name = "");
-        stela(const std::string& name = "");
+        stela(std::initializer_list<me*> subs, const std::string& name = "", const std::string& comment = "");
+        stela(const me& rhs, const std::string& name = "", const std::string& comment = "");
+        stela(const std::string& name = "", const std::string& comment = "");
 
     public:
         me& operator[](const std::string& name);

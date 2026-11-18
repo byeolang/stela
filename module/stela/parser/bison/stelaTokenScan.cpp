@@ -31,10 +31,7 @@ namespace by {
         nint tok = super::onScan(ps, val, loc, scanner, isBypass);
         switch(tok) {
             case NEWLINE:
-                if(!isBypass) {
-                    BY_DI("stelaIndentScan: ignore NEWLINE");
-                    return SCAN_AGAIN;
-                }
+                WHEN(!isBypass).dbgInfo("stelaIndentScan: ignore NEWLINE").ret(SCAN_AGAIN);
                 break;
         }
 

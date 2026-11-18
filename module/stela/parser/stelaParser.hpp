@@ -162,6 +162,8 @@ namespace by {
          */
         void onComment(const nchar* text);
 
+        stela* onLineComment(const std::string& text);
+
         //  keyword:
         stela* onDefBlock(stela* stmt);
         stela* onDefBlock(stela* blk, stela* stmt);

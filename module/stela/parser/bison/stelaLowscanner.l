@@ -151,6 +151,11 @@ false {
     return ENDOFFILE;
 }
 
+^[ \t]*#[^\n]* {
+    yylval->asStr = new std::string(yytext);
+    return LINE_COMMENT;
+}
+
 # {
     BEGIN(PS.pushState(stateComment));
 }

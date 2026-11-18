@@ -10,12 +10,14 @@ namespace by {
 
     BY(DEF_ME(stela), DEF_VISIT())
 
-    me::stela(std::initializer_list<me*> subs, const std::string& name): _name(name) { add(subs); }
+    me::stela(std::initializer_list<me*> subs, const std::string& name, const std::string& comment):
+        me(name, comment) { add(subs); }
 
-    me::stela(const me& rhs, const std::string& name):
-        super(), _subs(rhs._subs), _name(name), _comment(rhs._comment), _parent(rhs._parent) {}
+    me::stela(const me& rhs, const std::string& name, const std::string& comment):
+        super(), _subs(rhs._subs), _name(name), _comment(!comment.empty() ? comment : rhs._comment),
+        _parent(rhs._parent) {}
 
-    me::stela(const std::string& name): _name(name) {}
+    me::stela(const std::string& name, const std::string& comment): _name(name), _comment(comment) {}
 
     me& me::operator[](const std::string& name) { return sub(name); }
 

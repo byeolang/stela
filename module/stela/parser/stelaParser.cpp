@@ -3,6 +3,7 @@
 #include "stela/parser/bison/stelaLowparser.hpp"
 #include "stela/parser/bison/stelaLowscanner.hpp"
 #include "stela/parser/bison/stelaTokenScan.hpp"
+#include "stela/ast/emptyStela.hpp"
 #include <algorithm>
 #include <cctype>
 
@@ -93,7 +94,13 @@ namespace by {
         return tok > 0;
     }
 
-    void me::onComment(const nchar* text) { _state.onComment(_indents.size(), text); }
+    void me::onComment(const nchar* text) {
+        _state.onComment(_indents.size(), text);
+    }
+
+    stela* me::onLineComment(const std::string& text) {
+        return new emptyStela(text);
+    }
 
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
