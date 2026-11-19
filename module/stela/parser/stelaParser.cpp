@@ -28,14 +28,14 @@ namespace by {
             case SCAN_MODE_INDENT_IGNORE: _isIgnoreWhitespace = true; return SCAN_AGAIN;
             case SCAN_MODE_END: tok = 0; break;
             case ENDOFFILE: tok = onTokenEndOfFile(); break;
-            case INDENT:
-            case DEDENT: _state.onTokenIndentOrDedent(_indents.size()); break;
+            case INDENT: onTokenIndent(); break;
+            case DEDENT: onTokenDedent(); break;
             case NEWLINE: _state.onTokenNewLine(_indents.size()); break;
         }
 
         std::string tokName = getStelaTokenName(tok);
-        BY_DI("stela: dispatcher[%d] (token: \"%s\" [%d]) at %d,%d",
-              _dispatcher.len(), tokName, tok, loc->start.row, loc->start.col);
+        BY_DI("stela: dispatcher[%d] (token: \"%s\" [%d]) at %d,%d", _dispatcher.len(), tokName, tok, loc->start.row,
+            loc->start.col);
 
         return tok;
     }
@@ -94,15 +94,20 @@ namespace by {
         return tok > 0;
     }
 
-    void me::onComment(const nchar* text) {
-        _state.onComment(_indents.size(), text);
-    }
+    void me::onComment(const nchar* text) { _state.onComment(_indents.size(), text); }
 
-    stela* me::onLineComment(const std::string& text) {
-        return new emptyStela(text);
-    }
+    stela* me::onLineComment(const std::string& text) { return new emptyStela(text); }
 
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
+
+    void me::onTokenIndent() {
+        _state.onTokenIndentOrDedent(_indents.size());
+    }
+
+    void me::onTokenDedent() {
+        _indents.pop_back();
+        _state.onTokenIndentOrDedent(_indents.size());
+    }
 
     stela* me::onDefAssign(const std::string& name, stela* rhs) {
         WHEN_NUL(rhs).err("rhs is nul").ret(nullptr);
@@ -128,17 +133,13 @@ namespace by {
 
     nint me::onDedent(ncnt col, nint tok) {
         BY_DI("tokenEvent: onDedent(col: %d, tok: %d) indents.size()=%d", col, tok, _indents.size());
+        WHEN(_indents.empty()).ret(DEDENT);
 
-        _indents.pop_back();
-        nint now = _indents.back();
-        if(now < col) report("wrong dedent lv");
-
-        while(_indents.back() > col) {
-            BY_DI("tokenEvent: onDedent: indentlv become %d -> %d", _indents.back(),
-                _indents.size() > 1 ? _indents[_indents.size() - 2] : -1);
+        for(nidx n = 0; n < _indents.size(); n++) {
+            ncnt indentLv = _indents[n];
+            BY_DI("tokenEvent: onDedent: make new `DEDENT` token to reduce indent lv from %d[%d]", n, indentLv);
             _dispatcher.add(DEDENT);
-            _indents.pop_back();
-            if(_indents.size() <= 0) break;
+            if(indentLv > col) break;
         }
 
         _dispatcher.add(tok);

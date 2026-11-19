@@ -130,6 +130,10 @@ namespace by {
          * @return The token ID.
          */
         nint onTokenComma(nint tok);
+
+        void onTokenIndent();
+        void onTokenDedent();
+
         /**
          * @brief Handles an increase in indentation.
          * @param col The column count of the new indentation level.
@@ -139,6 +143,8 @@ namespace by {
         nint onIndent(ncnt col, nint tok);
         /**
          * @brief Handles a decrease in indentation.
+                  this handler makes `DEDENT` token and don't manipulate actual indentation level.`_indents `.
+                  that level will be reduced when the parser mets `DEDENT` token
          * @param col The column count of the new indentation level.
          * @param tok The token ID that triggered the dedentation.
          * @return The token ID for DEDENT.
