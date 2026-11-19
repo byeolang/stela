@@ -13,6 +13,8 @@ namespace by {
         nint tok;
 
         if(!(isBypass = disp.pop(tok))) tok = zzlexOrigin(val, loc, scanner);
+        if(tok == ENDOFFILE) tok = ps.onTokenEndOfFile(); // END_OF_FILE should be transformed to NEWLINE when you use `stelaIndentScan`.
+                                                          // that's why I can't write this stmt into _onScan.
         return tok;
     }
 

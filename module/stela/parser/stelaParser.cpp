@@ -27,7 +27,6 @@ namespace by {
             case SCAN_MODE_INDENT: setScan<stelaIndentScan>(); return SCAN_AGAIN;
             case SCAN_MODE_INDENT_IGNORE: _isIgnoreWhitespace = true; return SCAN_AGAIN;
             case SCAN_MODE_END: tok = 0; break;
-            case ENDOFFILE: tok = onTokenEndOfFile(); break;
             case INDENT: onTokenIndent(); break;
             case DEDENT: onTokenDedent(); break;
             case NEWLINE: _state.onTokenNewLine(_indents.size()); break;
