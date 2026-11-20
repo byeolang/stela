@@ -6,6 +6,14 @@ namespace by {
 
     BY(DEF_ME(stelaWriter))
 
+    namespace {
+        std::string _comment(const stela& s, nbool newLine) {
+            if(s.getComment().empty()) return ::by ::__clog_when__ ::get().ret("");
+
+            return " # " + s.getComment() + (newLine ? "\n" : "");
+        }
+    }
+
     std::string me::write(stela& root) {
         _ss.str("");
         _ss.clear();
@@ -14,7 +22,7 @@ namespace by {
             .err("only a root block is available for code generation").ret("");
 
         work(root);
-        _ss << root.getComment() << "\n";
+        _ss << _comment(root, true);
         return _ss.str();
     }
 
@@ -34,7 +42,7 @@ namespace by {
     nbool me::onVisit(const stelaVisitInfo& i, defStela& it) {
         WHEN(it.isRoot()) .ret(true); // writer need to omit `def` keyword for root element.
 
-        _ss << _indent(i.depth) << "def " << it.getName() << it.getComment() << "\n";
+        _ss << _indent(i.depth) << "def " << it.getName() << _close(i, it);
         return true;
     }
 
@@ -69,11 +77,9 @@ namespace by {
     }
 
     std::string me::_close(const stelaVisitInfo& i, stela& it) {
-        _ss << " " << it.getComment();
-
-        // only a `##` comment can be the postfix of an element: a newline is illegal before `,` or `}`.
         WHEN(i.parent TO(template cast<arrStela>())).ret("");
-        return "\n";
+
+        return _comment(it, false) + "\n";
     }
 
     std::string me::_indent(nint depth) {
