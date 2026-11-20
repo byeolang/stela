@@ -39,14 +39,12 @@ namespace by {
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, valStela& it) {
-        _open(i, it) << it.asStr();
-        _close(i, it);
+        _open(i, it) << it.asStr() << _close(i, it);
         return true;
     }
 
     nbool me::onVisit(const stelaVisitInfo& i, strStela& it) {
-        _open(i, it) << "\"" << it.asStr() << "\"";
-        _close(i, it);
+        _open(i, it) << "\"" << it.asStr() << "\"" << _close(i, it);
         return true;
     }
 
@@ -56,8 +54,7 @@ namespace by {
     }
 
     void me::onLeave(const stelaVisitInfo& i, arrStela& it) {
-        _ss << "}";
-        _close(i, it);
+        _ss << "}" <<  _close(i, it);
     }
 
     std::stringstream& me::_open(const stelaVisitInfo& i, stela& it) {
@@ -71,14 +68,12 @@ namespace by {
         return _ss;
     }
 
-    void me::_close(const stelaVisitInfo& i, stela& it) {
-        /*if(i.parent TO(template cast<arrStela>())) {
-            // only a `##` comment can be the postfix of an element: a newline is illegal before `,` or `}`.
-            _ss << " " << it.getComment();
-            return;
-        }*/
+    std::string me::_close(const stelaVisitInfo& i, stela& it) {
+        _ss << " " << it.getComment();
 
-        _ss << " " << it.getComment() << "\n";
+        // only a `##` comment can be the postfix of an element: a newline is illegal before `,` or `}`.
+        WHEN(i.parent TO(template cast<arrStela>())).ret("");
+        return "\n";
     }
 
     std::string me::_indent(nint depth) {

@@ -58,7 +58,7 @@ namespace by {
     private:
         std::string _indent(nint depth);
         std::stringstream& _open(const stelaVisitInfo& i, stela& it);
-        void _close(const stelaVisitInfo& i, stela& it);
+        std::string _close(const stelaVisitInfo& i, stela& it);
 
     private:
         std::stringstream _ss;
