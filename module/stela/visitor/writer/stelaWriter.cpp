@@ -65,7 +65,7 @@ namespace by {
         const auto& comment = it.getComment();
         WHEN(comment.empty()).ret(true);
 
-        _ss << "#" + comment << "\n";
+        _ss << comment << "\n";
         return true;
     }
 
