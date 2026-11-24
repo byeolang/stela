@@ -10,7 +10,7 @@ namespace by {
         std::string _comment(const stela& s, nbool newLine) {
             if(s.getComment().empty()) return ::by ::__clog_when__ ::get().ret("");
 
-            return " # " + s.getComment() + (newLine ? "\n" : "");
+            return " #" + s.getComment() + (newLine ? "\n" : "");
         }
     }
 

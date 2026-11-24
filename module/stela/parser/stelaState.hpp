@@ -30,17 +30,11 @@ namespace by {
             nbool apply();
             void rel();
 
-            const std::string& getComment() const { return _comment; }
-            void setComment(const std::string& new1) {
-                _comment = new1;
-                apply();
-            }
+            const std::string& getComment() const;
+            void setComment(const std::string& new1);
 
-            const stela* getDst() const { return _dst.get(); }
-            void setDst(const stela& new1) {
-                _dst.bind(new1);
-                apply();
-            }
+            const stela* getDst() const;
+            void setDst(const stela& new1);
 
         private:
             std::string _comment;

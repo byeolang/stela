@@ -242,11 +242,12 @@ TEST_F(stelaWriterTest, prefixComment) {
 }
 
 TEST_F(stelaWriterTest, postfixComment) {
-    const std::string script = "size := 18240004  # bytes\n";
+    const std::string script = "size := 18240004  #bytes\n",
+                      expect = "size := 18240004 #bytes\n";
 
     tstr<stela> root = stelaParser().parse(script);
     ASSERT_TRUE(root);
-    ASSERT_EQ(stelaWriter().write(*root), script);
+    ASSERT_EQ(stelaWriter().write(*root), expect);
 }
 
 TEST_F(stelaWriterTest, defKeepsBothComments) {

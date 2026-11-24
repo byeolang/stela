@@ -69,7 +69,7 @@ namespace by {
     }
 
     void me::setComment(const std::string& new1) {
-        _comment = !new1.empty() && new1[0] != ' ' ? " " + new1 : new1;
+        _comment = new1;
     }
 
     stela* me::getParent() { return _parent.get(); }
