@@ -53,6 +53,7 @@ namespace by {
         nbool onVisit(const stelaVisitInfo& i, valStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, strStela& it) override;
         nbool onVisit(const stelaVisitInfo& i, arrStela& it) override;
+        nbool onVisit(const stelaVisitInfo& i, emptyStela& it) override;
         void onLeave(const stelaVisitInfo& i, arrStela& it) override;
 
     private:

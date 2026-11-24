@@ -61,6 +61,14 @@ namespace by {
         return true;
     }
 
+    nbool me::onVisit(const stelaVisitInfo& i, emptyStela& it) {
+        const auto& comment = it.getComment();
+        WHEN(comment.empty()).ret(true);
+
+        _ss << "#" + comment << "\n";
+        return true;
+    }
+
     void me::onLeave(const stelaVisitInfo& i, arrStela& it) {
         _ss << "}" <<  _close(i, it);
     }

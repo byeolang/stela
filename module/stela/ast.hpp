@@ -9,3 +9,4 @@
 #include "stela/ast/strStela.hpp"
 #include "stela/ast/verStela.hpp"
 #include "stela/ast/nulStela.hpp"
+#include "stela/ast/emptyStela.hpp"
