@@ -132,9 +132,9 @@ namespace by {
 
     nint me::onDedent(ncnt col, nint tok) {
         BY_DI("tokenEvent: onDedent(col: %d, tok: %d) indents.size()=%d", col, tok, _indents.size());
-        WHEN(_indents.empty()).ret(DEDENT);
+        WHEN(_indents.empty()).ret(tok);
 
-        for(nidx n = 0; n < _indents.size(); n++) {
+        for(nidx n = 0; n < _indents.size() - 1; n++) {
             ncnt indentLv = _indents[n];
             BY_DI("tokenEvent: onDedent: make new `DEDENT` token to reduce indent lv from %d[%d]", n, indentLv);
             _dispatcher.add(DEDENT);
