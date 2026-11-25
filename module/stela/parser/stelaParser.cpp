@@ -136,9 +136,9 @@ namespace by {
 
         for(nidx n = _indents.size() - 2; n > 0; n--) {
             ncnt indentLv = _indents[n];
+            if(indentLv <= col) break;
             BY_DI("tokenEvent: onDedent: make new `DEDENT` token to reduce indent lv from %d[%d]", n, indentLv);
             _dispatcher.add(DEDENT);
-            if(indentLv > col) break;
         }
 
         _dispatcher.add(tok);
