@@ -34,14 +34,14 @@ TEST_F(stelaTest, checkVerStela) {
 
 TEST_F(stelaTest, verStelaReadsSegmentsFromItsOwnString) {
     verStela ver("1.0.8");
-    ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
+    ASSERT_STREQ(ver.asStr().c_str(), "1.0.8.0");
     ASSERT_EQ(ver.asMajor(), 1);
     ASSERT_EQ(ver.asPatch(), 8);
 
     // a short version is padded on the way in, so operator== can stay a plain string
     // compare without calling "1.2" and "1.2.0" different versions.
     verStela shorten("1.2");
-    ASSERT_STREQ(shorten.asStr().c_str(), "1.2.0");
+    ASSERT_STREQ(shorten.asStr().c_str(), "1.2.0.0");
     ASSERT_TRUE(shorten == verStela(1, 2, 0));
 }
 

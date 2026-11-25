@@ -108,7 +108,7 @@ TEST_F(basicParsing, testVerObject) {
     ASSERT_STREQ(name.asStr().c_str(), "dark souls");
 
     verStela& ver = man["ver"].cast<verStela>() OR_ASSERT(ver);
-    ASSERT_STREQ(ver.asStr().c_str(), "1.0.8");
+    ASSERT_STREQ(ver.asStr().c_str(), "1.0.8.0"); // patch version set to default 0.
     ASSERT_EQ(ver.asMajor(), 1);
     ASSERT_EQ(ver.asMinor(), 0);
     ASSERT_EQ(ver.asPatch(), 8);
