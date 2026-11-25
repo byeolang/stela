@@ -5,10 +5,7 @@ namespace by {
 
     BY(DEF_ME(emptyStela), DEF_VISIT())
 
-    const std::string& me::asStr() const {
-        static std::string inner = "";
-        return inner;
-    }
+    const std::string& me::asStr() const { return getComment(); }
 
     nchar me::asChar() const { return '\0'; }
 

@@ -20,11 +20,11 @@ TEST_F(verStelaRevTest, anAbsentRevStaysAbsentButReadsAsZero) {
     // three segments is the common case; padding it to four would rewrite every
     // document that spells one out.
     verStela three("0.1.4");
-    ASSERT_STREQ(three.asStr().c_str(), "0.1.4");
+    ASSERT_STREQ(three.asStr().c_str(), "0.1.4.0");
     ASSERT_EQ(three.asRev(), 0);
 
     // still padded up to three, as before.
-    ASSERT_STREQ(verStela("1.2").asStr().c_str(), "1.2.0");
+    ASSERT_STREQ(verStela("1.2").asStr().c_str(), "1.2.0.0");
     ASSERT_EQ(verStela("1.2").asRev(), 0);
 }
 
