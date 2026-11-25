@@ -134,7 +134,7 @@ namespace by {
         BY_DI("tokenEvent: onDedent(col: %d, tok: %d) indents.size()=%d", col, tok, _indents.size());
         WHEN(_indents.empty()).ret(tok);
 
-        for(nidx n = 0; n < _indents.size() - 1; n++) {
+        for(nidx n = _indents.size() - 2; n > 0; n--) {
             ncnt indentLv = _indents[n];
             BY_DI("tokenEvent: onDedent: make new `DEDENT` token to reduce indent lv from %d[%d]", n, indentLv);
             _dispatcher.add(DEDENT);
