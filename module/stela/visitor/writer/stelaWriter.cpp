@@ -63,19 +63,17 @@ namespace by {
 
     nbool me::onVisit(const stelaVisitInfo& i, emptyStela& it) {
         const auto& comment = it.getComment();
-        WHEN(comment.empty()).ret(true);
+        WHEN(comment.empty()) .ret(true);
 
         _ss << comment << "\n";
         return true;
     }
 
-    void me::onLeave(const stelaVisitInfo& i, arrStela& it) {
-        _ss << "}" <<  _close(i, it);
-    }
+    void me::onLeave(const stelaVisitInfo& i, arrStela& it) { _ss << "}" << _close(i, it); }
 
     std::stringstream& me::_open(const stelaVisitInfo& i, stela& it) {
         // an element has no name of its own: a comma separates it from the previous one.
-        WHEN(i.parent TO(template cast<arrStela>())).ret(_ss); // if `it` is a element of an array,
+        WHEN(i.parent TO(template cast<arrStela>())) .ret(_ss); // if `it` is a element of an array,
 
         _ss << _indent(i.depth) << it.getName() << " := ";
         return _ss;
@@ -83,9 +81,9 @@ namespace by {
 
     std::string me::_close(const stelaVisitInfo& i, stela& it) {
         if(i.parent TO(template cast<arrStela>())) {
-            WHEN(it.getComment().empty()).ret(i.isLast() ? "": ", ");
+            WHEN(it.getComment().empty()) .ret(i.isLast() ? "" : ", ");
 
-            std::string comma = i.isLast() ? "": ",";
+            std::string comma = i.isLast() ? "" : ",";
             return comma + _comment(it, true);
         }
 

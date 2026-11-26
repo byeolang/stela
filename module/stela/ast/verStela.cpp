@@ -37,7 +37,7 @@ namespace by {
 
             // need to fill `.0` to omitted versions:
             std::string ret = parsed[0];
-            for(auto e = parsed.begin() + 1; e != parsed.end() ;++e)
+            for(auto e = parsed.begin() + 1; e != parsed.end(); ++e)
                 ret += e->empty() ? EMPTY_VER : DELIMITER + *e;
             return ret;
         }

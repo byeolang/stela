@@ -247,8 +247,7 @@ TEST_F(stelaWriterTest, prefixComment) {
 }
 
 TEST_F(stelaWriterTest, postfixComment) {
-    const std::string script = "size := 18240004  #bytes\n",
-                      expect = "size := 18240004 #bytes\n";
+    const std::string script = "size := 18240004  #bytes\n", expect = "size := 18240004 #bytes\n";
 
     tstr<stela> root = stelaParser().parse(script);
     ASSERT_TRUE(root);
@@ -272,7 +271,7 @@ TEST_F(stelaWriterTest, defKeepsBothComments) {
     std::string expect =
         "# 0.1.4.1 부터 지원.\n"
         "def latest # 채널별 최신\n" // just an empty blank before `#` token.
-        "    stable := 0.1.4.1\n"; // indentation only occupies 4 spaces
+        "    stable := 0.1.4.1\n";   // indentation only occupies 4 spaces
     ASSERT_EQ(stelaWriter().write(*root), expect);
 }
 
@@ -354,8 +353,9 @@ TEST_F(stelaWriterTest, prefixCommentAboveArray) {
 
 TEST_F(stelaWriterTest, lineCommentInsideArray) {
     // a comment before a swallowed newline used to escape the array.
-    const std::string script = "deps := {1, # c\n"
-                               "3}\n";
+    const std::string script =
+        "deps := {1, # c\n"
+        "3}\n";
 
     tstr<stela> root = stelaParser().parse(script);
     ASSERT_TRUE(root);

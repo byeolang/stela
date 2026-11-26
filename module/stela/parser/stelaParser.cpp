@@ -99,9 +99,7 @@ namespace by {
 
     nint me::onTokenComma(nint tok) { return _onTokenEndOfInlineBlock(onIgnoreIndent(tok)); }
 
-    void me::onTokenIndent() {
-        _state.onTokenIndentOrDedent(_indents.size());
-    }
+    void me::onTokenIndent() { _state.onTokenIndentOrDedent(_indents.size()); }
 
     void me::onTokenDedent() {
         _indents.pop_back();
@@ -132,7 +130,7 @@ namespace by {
 
     nint me::onDedent(ncnt col, nint tok) {
         BY_DI("tokenEvent: onDedent(col: %d, tok: %d) indents.size()=%d", col, tok, _indents.size());
-        WHEN(_indents.empty()).ret(tok);
+        WHEN(_indents.empty()) .ret(tok);
 
         for(nidx n = _indents.size() - 2; n > 0; n--) {
             ncnt indentLv = _indents[n];

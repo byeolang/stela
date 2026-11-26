@@ -21,12 +21,14 @@ namespace by {
     }
 
     const std::string& me::state::getComment() const { return _comment; }
+
     void me::state::setComment(const std::string& new1) {
         _comment = new1;
         apply();
     }
 
     const stela* me::state::getDst() const { return _dst.get(); }
+
     void me::state::setDst(const stela& new1) {
         _dst.bind(new1);
         apply();

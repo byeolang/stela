@@ -24,7 +24,6 @@ namespace by {
 
     public:
         class _nout state {
-
         public:
             nbool isValid() const;
             nbool apply();

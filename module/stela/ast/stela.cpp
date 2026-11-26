@@ -10,11 +10,15 @@ namespace by {
 
     BY(DEF_ME(stela), DEF_VISIT())
 
-    me::stela(std::initializer_list<me*> subs, const std::string& name, const std::string& comment):
-        me(name, comment) { add(subs); }
+    me::stela(std::initializer_list<me*> subs, const std::string& name, const std::string& comment): me(name, comment) {
+        add(subs);
+    }
 
     me::stela(const me& rhs, const std::string& name, const std::string& comment):
-        super(), _subs(rhs._subs), _name(name), _comment(!comment.empty() ? comment : rhs._comment),
+        super(),
+        _subs(rhs._subs),
+        _name(name),
+        _comment(!comment.empty() ? comment : rhs._comment),
         _parent(rhs._parent) {}
 
     me::stela(const std::string& name, const std::string& comment): _name(name), _comment(comment) {}
@@ -64,13 +68,9 @@ namespace by {
         _subs.erase(std::string(name));
     }
 
-    const std::string& me::getComment() const {
-        return _comment;
-    }
+    const std::string& me::getComment() const { return _comment; }
 
-    void me::setComment(const std::string& new1) {
-        _comment = new1;
-    }
+    void me::setComment(const std::string& new1) { _comment = new1; }
 
     stela* me::getParent() { return _parent.get(); }
 

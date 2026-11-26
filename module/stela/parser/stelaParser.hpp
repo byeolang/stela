@@ -184,7 +184,9 @@ namespace by {
          *          made survives into the AST. Numbers are the primary; every other form
          *          specializes below.
          */
-        template <typename T> stela* onPrimitive(const T& arg) { return _state.onLeave(_indents.size(), new numStela(arg)); }
+        template <typename T> stela* onPrimitive(const T& arg) {
+            return _state.onLeave(_indents.size(), new numStela(arg));
+        }
 
         verStela* onVer(const std::string& version);
 
@@ -234,7 +236,11 @@ namespace by {
         std::vector<std::string> _errs;
     };
 
-    template <> inline stela* stelaParser::onPrimitive(const nbool& arg) { return _state.onLeave(_indents.size(), new boolStela(arg)); }
+    template <> inline stela* stelaParser::onPrimitive(const nbool& arg) {
+        return _state.onLeave(_indents.size(), new boolStela(arg));
+    }
 
-    template <> inline stela* stelaParser::onPrimitive(const std::string& arg) { return _state.onLeave(_indents.size(), new strStela(arg)); }
+    template <> inline stela* stelaParser::onPrimitive(const std::string& arg) {
+        return _state.onLeave(_indents.size(), new strStela(arg));
+    }
 } // namespace by
