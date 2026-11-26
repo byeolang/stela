@@ -195,7 +195,8 @@ namespace by {
         //          container:
         stela* onDefArray();
         stela* onDefArray(stela& elem);
-        stela* onDefArray(stela& as, stela& elem);
+        stela* onDefArrayElem(stela& elem);
+        stela* onDefArrayElem(stela& arr, stela& elems);
         //          file:
         stela* onCompilationUnit(stela* root);
 

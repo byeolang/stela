@@ -354,7 +354,8 @@ TEST_F(stelaWriterTest, prefixCommentAboveArray) {
 
 TEST_F(stelaWriterTest, lineCommentInsideArray) {
     // a comment before a swallowed newline used to escape the array.
-    const std::string script = "deps := {1, # c\n3}\n";
+    const std::string script = "deps := {1, # c\n"
+                               "3}\n";
 
     tstr<stela> root = stelaParser().parse(script);
     ASSERT_TRUE(root);

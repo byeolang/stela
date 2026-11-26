@@ -180,15 +180,18 @@ namespace by {
 
     stela* me::onDefArray() { return _state.onLeave(_indents.size(), new arrStela()); }
 
-    stela* me::onDefArray(stela& elem) {
-        arrStela* ret = new arrStela();
+    stela* me::onDefArray(stela& elems) { return _state.onLeave(_indents.size(), &elems); }
+
+    stela* me::onDefArrayElem(stela& elem) {
+        stela* ret = new arrStela();
         _addElem(*ret, elem);
-        return _state.onLeave(_indents.size(), ret);
+        return ret;
     }
 
-    stela* me::onDefArray(stela& as, stela& elem) {
-        _addElem(as, elem);
-        return _state.onLeave(_indents.size(), &as);
+    stela* me::onDefArrayElem(stela& arr, stela& elem) {
+        WHEN_NUL(arr.cast<arrStela>()).ret(nullptr);
+        _addElem(arr, elem);
+        return &arr;
     }
 
     void me::_addElem(stela& arr, stela& elem) {

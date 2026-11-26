@@ -230,9 +230,9 @@ access: type { $$ = $1; }
 
 //              container:
 tuple-item: expr-inline { $$ = $1; }
-tuple-items: tuple-item { $$ = PS.onDefArray(*$1); }
-           | tuple-items ',' tuple-item { $$ = PS.onDefArray(*$1, *$3); }
-def-array-value: '{' tuple-items '}' { $$ = $2; }
+tuple-items: tuple-item { $$ = PS.onDefArrayElem(*$1); }
+           | tuple-items ',' tuple-item { $$ = PS.onDefArrayElem(*$1, *$3); }
+def-array-value: '{' tuple-items '}' { $$ = PS.onDefArray(*$2); }
                | '{' '}' { $$ = PS.onDefArray(); }
 
 compilation-unit: defblock { $$ = PS.onCompilationUnit($1); }

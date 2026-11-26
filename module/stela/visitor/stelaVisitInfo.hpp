@@ -21,6 +21,9 @@ namespace by {
         stelaVisitInfo(const std::string& newName, stela* newParent, nidx newIndex, ncnt newLen, nint newDepth);
 
     public:
+        nbool isLast() const;
+
+    public:
         std::string name;
         stela* parent;
         nidx index;

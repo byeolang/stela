@@ -7,10 +7,10 @@ namespace by {
     BY(DEF_ME(stelaWriter))
 
     namespace {
-        std::string _comment(const stela& s, nbool newLine) {
+        std::string _comment(const stela& s, nbool putNewLineIfComment) {
             if(s.getComment().empty()) return ::by ::__clog_when__ ::get().ret("");
 
-            return " #" + s.getComment() + (newLine ? "\n" : "");
+            return " #" + s.getComment() + (putNewLineIfComment ? "\n" : "");
         }
     }
 
@@ -75,17 +75,19 @@ namespace by {
 
     std::stringstream& me::_open(const stelaVisitInfo& i, stela& it) {
         // an element has no name of its own: a comma separates it from the previous one.
-        if(i.parent TO(template cast<arrStela>())) {
-            if(i.index) _ss << ", ";
-            return _ss;
-        }
+        WHEN(i.parent TO(template cast<arrStela>())).ret(_ss); // if `it` is a element of an array,
 
         _ss << _indent(i.depth) << it.getName() << " := ";
         return _ss;
     }
 
     std::string me::_close(const stelaVisitInfo& i, stela& it) {
-        WHEN(i.parent TO(template cast<arrStela>())).ret("");
+        if(i.parent TO(template cast<arrStela>())) {
+            WHEN(it.getComment().empty()).ret(i.isLast() ? "": ", ");
+
+            std::string comma = i.isLast() ? "": ",";
+            return comma + _comment(it, true);
+        }
 
         return _comment(it, false) + "\n";
     }
